@@ -1,2 +1,6 @@
 <Solution>
+  <Project Path="qwl-restaurant.API/qwl-restaurant.API.csproj" />
+  <Project Path="qwl-restaurant.Business/qwl-restaurant.Business.csproj" />
+  <Project Path="qwl-restaurant.DataAccess/qwl-restaurant.DataAccess.csproj" />
+  <Project Path="qwl-restaurant.Entities/qwl-restaurant.Entities.csproj" />
 </Solution>
