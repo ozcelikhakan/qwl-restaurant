@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "maks86UyNNo=",
+  "dgSpecHash": "XQR+ALX7xVE=",
   "success": true,
   "projectFilePath": "/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/qwl-restaurant.DataAccess.csproj",
   "expectedPackageFiles": [
@@ -35,7 +35,7 @@
     {
       "code": "NU1903",
       "level": "Warning",
-      "message": "'Microsoft.Extensions.Caching.Memory' 8.0.0 paketinde önem derecesi yüksek olan bilinen bir https://github.com/advisories/GHSA-qj66-m88j-hmgj güvenlik açığı var",
+      "message": "Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
       "projectPath": "/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/qwl-restaurant.DataAccess.csproj",
       "warningLevel": 1,
       "filePath": "/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/qwl-restaurant.DataAccess.csproj",
