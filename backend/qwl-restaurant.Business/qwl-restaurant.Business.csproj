@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\qwl-restaurant.DataAccess\qwl-restaurant.DataAccess.csproj" />
+    <ProjectReference Include="..\qwl-restaurant.Entities\qwl-restaurant.Entities.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>qwl_restaurant.Business</RootNamespace>
