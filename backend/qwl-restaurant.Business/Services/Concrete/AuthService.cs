@@ -12,17 +12,20 @@ using QwlRestaurant.Entities.DTOs.Auth;
 
 namespace QwlRestaurant.Business.Services.Concrete;
 
+//This service handles authentication operations such as login, register, token creation and password changes
 public class AuthService : IAuthService
 {
-
     private readonly UserManager<AppUser> _userManager;
-    private readonly IConfiguration _configuration
+    private readonly IConfiguration _configuration;
 
+    //Dependency Injection
     public AuthService(UserManager<AppUser> userManager, IConfiguration configuration)
+
     {
         _userManager = userManager;
         _configuration = configuration;
     }
+    //This method changes the password of an existing user
     public async Task ChangePasswordAsync(string userID, ChangePasswordDto dto)
     {
         var user = await _userManager.FindByIdAsync(userID)
@@ -32,7 +35,7 @@ public class AuthService : IAuthService
         if (!result.Succeeded)
             throw new InvalidOperationException(string.Join(",", result.Errors.Select(e => e.Description))); 
     }
-
+    //This method logs in the user and returns access and refresh token
     public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email)
@@ -43,6 +46,7 @@ public class AuthService : IAuthService
 
         return await BuildAuthResponseAsync(user);  
     }
+    //This method creates a new access token by using a valid refresh token
     public async Task<AuthResponseDto> RefreshTokenAsync(string refreshToken)
     {
         var user = _userManager.Users.FirstOrDefault(u =>
@@ -51,7 +55,7 @@ public class AuthService : IAuthService
 
         return await BuildAuthResponseAsync(user);
     }
-
+    //This method registers a new user
     public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
     {
         var existing = await _userManager.FindByEmailAsync(dto.Email);
@@ -73,7 +77,7 @@ public class AuthService : IAuthService
         await _userManager.AddToRoleAsync(user, "Customer");
         return await BuildAuthResponseAsync(user);     
     }
-
+    //This method removes the refresh token of a user
     public async Task RevokeTokenAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId)
@@ -84,8 +88,8 @@ public class AuthService : IAuthService
         await _userManager.UpdateAsync(user);
 
     }
-
-    public async Task UpdateProfileAsync(string userID, UpdateProfileDto dto)
+    //This method updates basic profile information of a user
+    public async Task UpdateProfileAsync(string userId, UpdateProfileDto dto)
     {
         var user = await _userManager.FindByIdAsync(userId)
         ?? throw new InvalidOperationException("User not found");
@@ -97,7 +101,7 @@ public class AuthService : IAuthService
 
         await _userManager.UpdateAsync(user);
     }
-
+    //This method prepares the full authentication response for a user
     private async Task<AuthResponseDto> BuildAuthResponseAsync(AppUser user)
     {
         var roles = await _userManager.GetRolesAsync(user);
@@ -124,7 +128,7 @@ public class AuthService : IAuthService
             
         };
     }
-
+    //This method creates a JWT access that contains user identity and role claims
     private string GenerateAccessToken(AppUser user, IList<string> roles)
     {
         var key = new SymmetricSecurityKey(
@@ -150,9 +154,9 @@ public class AuthService : IAuthService
             
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
+    //This methods creates a secure random refresh token
     private static string GenerateRefreshToken()
-    
+
     {
         var bytes = new byte[64];
         using var rng = RandomNumberGenerator.Create();
