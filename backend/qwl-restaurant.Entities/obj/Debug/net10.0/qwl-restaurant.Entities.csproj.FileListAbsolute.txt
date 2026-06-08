@@ -1,0 +1,13 @@
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/bin/Debug/net10.0/qwl-restaurant.Entities.deps.json
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/bin/Debug/net10.0/qwl-restaurant.Entities.dll
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/bin/Debug/net10.0/qwl-restaurant.Entities.pdb
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/qwl-restaurant.Entities.csproj.AssemblyReference.cache
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/qwl-restaurant.Entities.GeneratedMSBuildEditorConfig.editorconfig
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/qwl-restaurant.Entities.AssemblyInfoInputs.cache
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/qwl-restaurant.Entities.AssemblyInfo.cs
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/qwl-restaurant.Entities.csproj.CoreCompileInputs.cache
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/qwl-restaurant.Entities.sourcelink.json
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/qwl-restaurant.Entities.dll
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/refint/qwl-restaurant.Entities.dll
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/qwl-restaurant.Entities.pdb
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.Entities/obj/Debug/net10.0/ref/qwl-restaurant.Entities.dll

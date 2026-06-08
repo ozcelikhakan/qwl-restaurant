@@ -1,0 +1,16 @@
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/bin/Debug/net10.0/qwl-restaurant.DataAccess.deps.json
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/bin/Debug/net10.0/qwl-restaurant.DataAccess.dll
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/bin/Debug/net10.0/qwl-restaurant.DataAccess.pdb
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/bin/Debug/net10.0/qwl-restaurant.Entities.dll
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/bin/Debug/net10.0/qwl-restaurant.Entities.pdb
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/qwl-restaurant.DataAccess.csproj.AssemblyReference.cache
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/qwl-restaurant.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/qwl-restaurant.DataAccess.AssemblyInfoInputs.cache
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/qwl-restaurant.DataAccess.AssemblyInfo.cs
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/qwl-restaurant.DataAccess.csproj.CoreCompileInputs.cache
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/qwl-restaurant.DataAccess.sourcelink.json
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/qwl-rest.9067456D.Up2Date
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/qwl-restaurant.DataAccess.dll
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/refint/qwl-restaurant.DataAccess.dll
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/qwl-restaurant.DataAccess.pdb
+/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.DataAccess/obj/Debug/net10.0/ref/qwl-restaurant.DataAccess.dll

@@ -5,6 +5,10 @@
     <ProjectReference Include="..\qwl-restaurant.Entities\qwl-restaurant.Entities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>qwl_restaurant.Business</RootNamespace>
