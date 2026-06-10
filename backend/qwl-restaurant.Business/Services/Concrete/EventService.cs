@@ -1,5 +1,7 @@
+using System.Dynamic;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using System.Xml;
 using Microsoft.EntityFrameworkCore;
 using QwlRestaurant.Business.Services.Abstract;
 using QwlRestaurant.DataAccess.Context;
@@ -13,10 +15,13 @@ public class EventService : IEventService
 
     private readonly AppDbContext _context;
 
+    //Dependency Injection
     public EventService(AppDbContext context)
     {
         _context = context;
     }
+
+    //Handles ticket purchasing for a specific event
     public async Task<EventTicketDto> BuyTicketAsync(BuyTicketDto dto, string userId)
     {
         var ev = await _context.Events.FindAsync(dto.EventId)
@@ -53,6 +58,7 @@ public class EventService : IEventService
 
     }
 
+    //Creates a new event
     public async Task<EventDto> CreateAsync(CreateEventDto dto)
     {
         var ev = new Event
@@ -73,6 +79,7 @@ public class EventService : IEventService
         return ToDto(ev);
     }
 
+    //Deletes an event by its ID
     public async Task DeleteAsync(int id)
     {
         var ev = await _context.Events.FindAsync(id)
@@ -82,18 +89,21 @@ public class EventService : IEventService
         await _context.SaveChangesAsync();
     }
 
+    //Return all events 
     public async Task<IEnumerable<EventDto>> GetAllAsync()
     {
         var events = await _context.Events.OrderBy(e => e.EventDate).ToListAsync();
         return events.Select(ToDto);
     }
 
+    //Get a single event by ID
     public async Task<EventDto?> GetByIdAsync(int id)
     {
         var ev = await _context.Events.FindAsync(id);
         return ev == null ? null : ToDto(ev);
     }
 
+    //Returns all tickets purchased by a specific user
     public async Task<IEnumerable<EventTicketDto>> GetUserTicketsAsync(string userıd)
     {
         var tickets = await _context.EventTickets
@@ -116,9 +126,23 @@ public class EventService : IEventService
 
     }
 
-    public Task<EventDto> UpdateAsync(int id, CreateEventDto dto)
+    public async Task<EventDto> UpdateAsync(int id, CreateEventDto dto)
     {
-        throw new NotImplementedException();
+        var ev = await _context.Events.FindAsync(id)
+         ?? throw new InvalidOperationException("Event not found");
+
+        ev.Title = dto.Title;
+        ev.Description = dto.Description;
+        ev.ImageUrl = dto.ImageUrl;
+        ev.EventDate = dto.EventDate;
+        ev.StartTime = dto.StartTime;
+        ev.EndTime = dto.EndTime;
+        ev.Location = dto.Location;
+        ev.TicketPrice = dto.TicketPrice;
+        ev.TotalSlots = dto.TotalSlots;
+
+        await _context.SaveChangesAsync();
+        return ToDto(ev);
     }
 
     private static EventDto ToDto(Event ev)
