@@ -126,6 +126,7 @@ public class EventService : IEventService
 
     }
 
+    //Updates an existing event
     public async Task<EventDto> UpdateAsync(int id, CreateEventDto dto)
     {
         var ev = await _context.Events.FindAsync(id)
@@ -145,6 +146,7 @@ public class EventService : IEventService
         return ToDto(ev);
     }
 
+    //Converts an event entity to an EventDto
     private static EventDto ToDto(Event ev)
     {
         var now = DateTime.UtcNow.Date;
