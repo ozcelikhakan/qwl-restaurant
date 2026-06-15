@@ -15,6 +15,10 @@ using QwlRestaurant.Entities.DTOs.Reservation;
 
 namespace QwlRestaurant.API.Extensions;
 
+/// <summary>
+/// Contains extension methods used to register application services.
+/// This class helps keep Program.cs cleaner and more organized.
+/// </summary>
 public static class ServiceExtensions
 {
 
@@ -25,6 +29,7 @@ public static class ServiceExtensions
         return services;
     }
 
+    //Registers and configures ASP.NET Core Identity.
     public static IServiceCollection AddIdentityConfig(this IServiceCollection services)
     {
         services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -39,6 +44,7 @@ public static class ServiceExtensions
         return services;
     }
 
+    //Registers JWT Bearer authentication.
     public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration config)
     {
         var key = Encoding.UTF8.GetBytes(config["Jwt:Secret"]!);
@@ -66,6 +72,7 @@ public static class ServiceExtensions
         return services;
     }
 
+    //Registers business layer services
     public static IServiceCollection AddBusinessServices(this IServiceCollection services)
     {
         services.AddScoped<IAuthService, AuthService>();
@@ -77,6 +84,7 @@ public static class ServiceExtensions
         return services;
     }   
 
+    //Registers Swagger and adds JWT authorization support to Swagger UI.
     public static IServiceCollection AddSwaggerWithJwt(this IServiceCollection services)
     {
         services.AddSwaggerGen(c =>
@@ -106,6 +114,7 @@ public static class ServiceExtensions
         return services;
     }
 
+    //Registers the CORS policy for the Angular frontend.
     public static IServiceCollection AddCorsPolicy(this IServiceCollection services)
     {
         services.AddCors(options =>
