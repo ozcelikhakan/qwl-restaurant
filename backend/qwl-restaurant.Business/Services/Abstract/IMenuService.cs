@@ -11,6 +11,8 @@ public interface IMenuService
     Task<MenuItemDto> UpdateMenuItemAsync(int id, CreateMenuItemDto dto);
     Task DeleteMenuItemAsync(int id);
     Task<IEnumerable<DailySpecialDto>> GetDailySpecialAsync();
+
+    Task<DailySpecialDto> CreateDailySpecialAsync(DailySpecialDto dto);
     Task DeleteDailySpecialAsync(int id);
 
 }

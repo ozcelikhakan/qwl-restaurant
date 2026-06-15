@@ -1,3 +1,4 @@
+using System.Xml;
 using Microsoft.EntityFrameworkCore;
 using QwlRestaurant.Business.Services.Abstract;
 using QwlRestaurant.DataAccess.Context;
@@ -138,4 +139,21 @@ public class MenuService : IMenuService
         CategoryName = m.MenuCategory.Name ?? string.Empty,
         CategorySlug = m.MenuCategory.Slug ?? string.Empty
     };
+
+    public async Task<DailySpecialDto> CreateDailySpecialAsync(DailySpecialDto dto)
+    {
+        var special = new DailySpecial
+        {
+            Title = dto.Title,
+            Description = dto.Description,
+            Price = dto.Price,
+            ImageUrl = dto.ImageUrl,
+            DisplayOrder = dto.DisplayOrder
+        };
+
+        await _context.DailySpecials.AddAsync(special);
+        await _context.SaveChangesAsync();
+        dto.Id = special.Id;
+        return dto;
+    }
 }
