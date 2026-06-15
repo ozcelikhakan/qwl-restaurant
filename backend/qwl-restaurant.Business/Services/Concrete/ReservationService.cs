@@ -53,7 +53,7 @@ public class ReservationService : IReservationService
         return list.Select(ToDto);
     }
     // Returns a single reservation by its ID
-    public async Task<ReservationDto?> GetByIdAsync(int id)
+    public async Task<ReservationDto> GetByIdAsync(int id)
     {
         var r = await _context.Reservations.FindAsync(id);
         return r == null ? null : ToDto(r);
