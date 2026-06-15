@@ -23,6 +23,8 @@ public class AuthController : ControllerBase
         _userManager = userManager;
     }
 
+    // POST: api/auth/register
+    // Creates a new user account.
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
@@ -37,6 +39,8 @@ public class AuthController : ControllerBase
         }
     }
 
+    // POST: api/auth/login
+    // Authenticates the user and returns token information.
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
@@ -51,6 +55,8 @@ public class AuthController : ControllerBase
         }
     }
 
+    // POST: api/auth/refresh
+    // Generates a new access token using a valid refresh token.
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto dto)
     {
@@ -65,6 +71,9 @@ public class AuthController : ControllerBase
         }
     }
 
+    // POST: api/auth/revoke
+    // Revokes the current user's refresh token.
+    // This endpoint requires authentication.
     [Authorize]
     [HttpPost("revoke")]
     public async Task<IActionResult> Revoke()
@@ -74,6 +83,9 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
+    // GET: api/auth/me
+    // Returns information about the currently authenticated user.
+    // This endpoint requires authentication.
     [Authorize]
     [HttpGet("me")]
     public IActionResult Me()
@@ -88,6 +100,9 @@ public class AuthController : ControllerBase
         });       
     }
 
+    // PUT: api/auth/change-password
+    // Changes the password of the currently authenticated user.
+    // This endpoint requires authentication.
     [Authorize]
     [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
@@ -105,6 +120,9 @@ public class AuthController : ControllerBase
         }
     }
 
+    // PUT: api/auth/profile
+    // Updates the profile information of the currently authenticated user.
+    // This endpoint requires authentication.
     [Authorize]
     [HttpPut("profile")]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)

@@ -56,7 +56,9 @@ public class ReservationService : IReservationService
     public async Task<ReservationDto> GetByIdAsync(int id)
     {
         var r = await _context.Reservations.FindAsync(id);
-        return r == null ? null : ToDto(r);
+        if (r == null)
+            throw new KeyNotFoundException($"Reservation {id} not found.");
+        return ToDto(r);
     }
     // Returns occupied table numbers for a specific date and time
     public async Task<IEnumerable<string>> GetOccupiedTablesAsync(DateTime date, TimeSpan time)
@@ -69,8 +71,8 @@ public class ReservationService : IReservationService
         .Select(r => r.TableNumber!)
         .ToListAsync();
     }
- 
-     // Updates the status of an existing reservation 
+
+    // Updates the status of an existing reservation 
     public async Task UpdatesStatusAsync(int id, int status)
     {
         var r = await _context.Reservations.FindAsync(id)
@@ -79,7 +81,7 @@ public class ReservationService : IReservationService
         await _context.SaveChangesAsync();
     }
     // Converts a Reservation entity to a ReservationDto
-    private static ReservationDto ToDto(Reservation r) => new ()
+    private static ReservationDto ToDto(Reservation r) => new()
     {
         Id = r.Id,
         FullName = r.FullName,
