@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("qwl-restaurant.Business")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+071e209261a05b92ea98a6e1c1b9041bb3b87062")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2bdb05086e459fcc349d08aa2c756eda685a4526")]
 [assembly: System.Reflection.AssemblyProductAttribute("qwl-restaurant.Business")]
 [assembly: System.Reflection.AssemblyTitleAttribute("qwl-restaurant.Business")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
