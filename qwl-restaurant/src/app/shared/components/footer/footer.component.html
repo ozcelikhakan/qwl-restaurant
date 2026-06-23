@@ -1,1 +1,97 @@
-<p>footer works!</p>
+<footer class="bg-owl-dark text-gray-400">
+  <!-- Top footer section -->
+  <div class="container mx-auto px-6 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+      <!-- Brand information -->
+      <div>
+        <!-- Footer logo -->
+        <div class="mb-4">
+          <img src="assets/images/footer_white_logo.png" alt="OWL Restaurant" class="h-12">
+        </div>
+
+        <!-- Short restaurant description -->
+        <p class="text-sm leading-relaxed mb-6">
+          Where taste meets elegance. We look forward to welcoming you with our special menu prepared using the freshest ingredients.
+        </p>
+
+        <!-- Social media links -->
+        <div class="flex gap-3">
+          @for (social of socials; track social.icon) {
+            <a [href]="social.url" target="_blank" rel="noopener"
+               class="w-9 h-9 border border-gray-600 flex items-center justify-center text-gray-400 hover:border-owl-primary hover:text-owl-primary transition-colors">
+              <i [class]="'pi ' + social.icon + ' text-sm'"></i>
+            </a>
+          }
+        </div>
+      </div>
+
+      <!-- Explore links -->
+      <div>
+        <h4 class="font-heading text-white text-lg mb-5">Explore</h4>
+
+        <!-- Footer navigation menu -->
+        <ul class="space-y-3 text-sm">
+          @for (link of exploreLinks; track link.path) {
+            <li>
+              <a [routerLink]="link.path"
+                 class="hover:text-owl-primary transition-colors flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-owl-primary block"></span>
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Working hours -->
+      <div>
+        <h4 class="font-heading text-white text-lg mb-5">Working Hours</h4>
+
+        <!-- Restaurant opening and closing hours -->
+        <ul class="space-y-3 text-sm">
+          @for (hour of workingHours; track hour.days) {
+            <li class="flex justify-between">
+              <span>{{ hour.days }}</span>
+              <span class="text-owl-primary">{{ hour.time }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Contact information -->
+      <div>
+        <h4 class="font-heading text-white text-lg mb-5">Contact</h4>
+
+        <!-- Address, phone and email information -->
+        <ul class="space-y-4 text-sm">
+          <li class="flex gap-3">
+            <i class="pi pi-map-marker text-owl-primary mt-0.5"></i>
+            <span>Bağdat Avenue No:123<br>Kadıköy, Istanbul</span>
+          </li>
+
+          <li class="flex gap-3">
+            <i class="pi pi-phone text-owl-primary mt-0.5"></i>
+            <span>+90 212 555 00 00</span>
+          </li>
+
+          <li class="flex gap-3">
+            <i class="pi pi-envelope text-owl-primary mt-0.5"></i>
+            <span>info&#64;qwlrestaurant.com</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom footer bar -->
+  <div class="border-t border-gray-800">
+    <div class="container mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+      <!-- Copyright text -->
+      <p>&copy; {{ currentYear }} OWL Restaurant. All rights reserved.</p>
+
+      <!-- Footer credit text -->
+      <p>Designed and developed with <span class="text-owl-primary">♥</span></p>
+    </div>
+  </div>
+</footer>

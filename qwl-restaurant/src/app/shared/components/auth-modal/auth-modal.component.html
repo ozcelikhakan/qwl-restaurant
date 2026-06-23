@@ -1,1 +1,107 @@
-<p>auth-modal works!</p>
+<div class="modal-backdrop fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4"
+     (click)="closeOnBackdrop($event)">
+
+  <div class="bg-white w-full max-w-md relative">
+
+    <!-- Close -->
+    <button (click)="auth.closeAuthModal()"
+            class="absolute top-4 right-4 text-gray-400 hover:text-owl-dark transition-colors text-xl">
+      <i class="pi pi-times"></i>
+    </button>
+
+    <!-- Header -->
+    <div class="px-8 pt-8 pb-0">
+      <span class="font-cursive text-4xl text-owl-primary">Welcome</span>
+      <h2 class="font-heading text-2xl text-owl-dark mt-1">OWL Restaurant</h2>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b border-gray-200 mx-8 mt-6">
+      <button (click)="switchTab('login')"
+              class="flex-1 py-3 text-sm font-medium uppercase tracking-wider transition-colors border-b-2 -mb-px"
+              [class.border-owl-primary]="activeTab() === 'login'"
+              [class.text-owl-primary]="activeTab() === 'login'"
+              [class.border-transparent]="activeTab() !== 'login'"
+              [class.text-gray-400]="activeTab() !== 'login'">
+        Sign In
+      </button>
+      <button (click)="switchTab('register')"
+              class="flex-1 py-3 text-sm font-medium uppercase tracking-wider transition-colors border-b-2 -mb-px"
+              [class.border-owl-primary]="activeTab() === 'register'"
+              [class.text-owl-primary]="activeTab() === 'register'"
+              [class.border-transparent]="activeTab() !== 'register'"
+              [class.text-gray-400]="activeTab() !== 'register'">
+        Sign Up
+      </button>
+    </div>
+
+    <!-- Forms -->
+    <div class="px-8 py-6">
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="bg-red-50 text-red-600 text-sm px-4 py-3 mb-4 border border-red-200">
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Login Form -->
+      @if (activeTab() === 'login') {
+        <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="space-y-4">
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1.5">Email</label>
+            <input type="email" name="email" [(ngModel)]="loginDto.email" required
+                   class="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-owl-primary transition-colors"
+                   placeholder="example@mail.com">
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1.5">Password</label>
+            <input type="password" name="password" [(ngModel)]="loginDto.password" required
+                   class="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-owl-primary transition-colors"
+                   placeholder="••••••">
+          </div>
+          <button type="submit" [disabled]="loading() || loginForm.invalid"
+                  class="btn-owl btn-filled w-full text-center py-3 text-sm disabled:opacity-60">
+            {{ loading() ? 'Signing in...' : 'Sign In' }}
+          </button>
+        </form>
+      }
+
+      <!-- Register Form -->
+      @if (activeTab() === 'register') {
+        <form (ngSubmit)="onRegister()" #regForm="ngForm" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1.5">First Name</label>
+              <input type="text" name="firstName" [(ngModel)]="registerDto.firstName" required
+                     class="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-owl-primary transition-colors"
+                     placeholder="Your first name">
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1.5">Last Name</label>
+              <input type="text" name="lastName" [(ngModel)]="registerDto.lastName" required
+                     class="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-owl-primary transition-colors"
+                     placeholder="Your last name">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1.5">Email</label>
+            <input type="email" name="email" [(ngModel)]="registerDto.email" required
+                   class="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-owl-primary transition-colors"
+                   placeholder="example@mail.com">
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-1.5">Password</label>
+            <input type="password" name="password" [(ngModel)]="registerDto.password" required minlength="6"
+                   class="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-owl-primary transition-colors"
+                   placeholder="At least 6 characters">
+          </div>
+          <button type="submit" [disabled]="loading() || regForm.invalid"
+                  class="btn-owl btn-filled w-full text-center py-3 text-sm disabled:opacity-60">
+            {{ loading() ? 'Signing up...' : 'Sign Up' }}
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+</div>

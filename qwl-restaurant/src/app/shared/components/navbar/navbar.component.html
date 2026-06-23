@@ -1,1 +1,230 @@
-<p>navbar works!</p>
+<header
+  class="fixed top-0 left-0 w-full z-50 transition-all duration-500"
+  [class.navbar-transparent]="!isSticky()"
+  [class.bg-white]="isSticky()"
+  [class.shadow-md]="isSticky()">
+
+  <!-- Top bar: visible only when the navbar is not sticky -->
+  <div class="overflow-hidden transition-all duration-300"
+       [class.max-h-0]="isSticky()"
+       [class.max-h-12]="!isSticky()">
+    <div class="border-b border-white/20">
+      <div class="container mx-auto px-6">
+        <div class="flex items-center justify-between h-11">
+
+          <!-- Contact information -->
+          <div class="hidden sm:flex items-center gap-6 text-white/80 text-xs">
+            <a href="mailto:info@qwlrestaurant.com"
+               class="flex items-center gap-2 hover:text-owl-primary transition-colors">
+              <i class="pi pi-envelope text-owl-primary text-xs"></i>
+              info&#64;qwlrestaurant.com
+            </a>
+            <a href="tel:+902125550000"
+               class="flex items-center gap-2 hover:text-owl-primary transition-colors">
+              <i class="pi pi-phone text-owl-primary text-xs"></i>
+              +90 212 555 00 00
+            </a>
+          </div>
+
+          <!-- Book a table button and social links -->
+          <div class="flex items-center gap-4 ml-auto">
+            <a routerLink="/reservation"
+               class="bg-owl-primary text-white text-xs font-medium uppercase tracking-wider px-6 py-2 hover:bg-owl-primary-dark transition-colors whitespace-nowrap">
+              Book a Table
+            </a>
+            <div class="hidden sm:flex items-center gap-2">
+              @for (s of socials; track s.icon) {
+                <a [href]="s.url" target="_blank" rel="noopener"
+                   class="w-7 h-7 flex items-center justify-center text-white/60 hover:text-owl-primary transition-colors">
+                  <i [class]="'pi ' + s.icon + ' text-xs'"></i>
+                </a>
+              }
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main navbar -->
+  <div class="container mx-auto px-6">
+    <nav class="flex items-center justify-between h-20">
+
+      <!-- Logo -->
+      <a routerLink="/" (click)="closeMobile()">
+        <img [src]="isSticky() ? 'assets/images/logo_black.png' : 'assets/images/logo_white.png'"
+             alt="OWL Restaurant" class="h-10 transition-all duration-300">
+      </a>
+
+      <!-- Desktop navigation -->
+      <ul class="hidden lg:flex items-center gap-8 list-none">
+        @for (link of navLinks; track link.path) {
+          <li>
+            <a [routerLink]="link.path" routerLinkActive="!text-owl-primary"
+               [routerLinkActiveOptions]="{ exact: link.exact ?? false }"
+               class="text-sm font-medium uppercase tracking-wider transition-colors duration-200"
+               [class.text-white]="!isSticky()"
+               [class.text-owl-dark]="isSticky()">
+              {{ link.label }}
+            </a>
+          </li>
+        }
+      </ul>
+
+      <!-- Right-side actions -->
+      <div class="hidden lg:flex items-center gap-4">
+        @if (auth.isLoggedIn()) {
+          <!-- User dropdown -->
+          <div class="relative user-dropdown-wrap">
+            <button (click)="toggleDropdown()"
+                    class="flex items-center gap-2 text-xs font-medium uppercase tracking-wider transition-colors"
+                    [class.text-white]="!isSticky()"
+                    [class.text-owl-dark]="isSticky()">
+              @if (auth.user()?.avatarUrl) {
+                <img [src]="auth.user()!.avatarUrl" alt="Avatar"
+                     class="w-7 h-7 rounded-full object-cover border border-white/40">
+              } @else {
+                <span class="w-7 h-7 rounded-full bg-owl-primary flex items-center justify-center flex-shrink-0">
+                  <i class="pi pi-user text-white text-xs"></i>
+                </span>
+              }
+              {{ auth.user()?.firstName }} {{ auth.user()?.lastName }}
+              <i class="pi pi-angle-down text-xs transition-transform duration-200"
+                 [class.rotate-180]="dropdownOpen()"></i>
+            </button>
+
+            @if (dropdownOpen()) {
+              <div class="absolute right-0 top-full mt-2 w-52 bg-white shadow-lg border border-gray-100 z-50 py-1">
+                @if (auth.isAdmin()) {
+                  <a routerLink="/admin" (click)="dropdownOpen.set(false)"
+                     class="flex items-center gap-3 px-4 py-2.5 text-sm text-owl-dark hover:bg-owl-light hover:text-owl-primary transition-colors">
+                    <i class="pi pi-cog text-xs text-owl-primary w-4"></i>
+                    Admin Panel
+                  </a>
+                  <div class="border-t border-gray-100 my-1"></div>
+                }
+
+                <a routerLink="/profile" (click)="dropdownOpen.set(false)"
+                   class="flex items-center gap-3 px-4 py-2.5 text-sm text-owl-dark hover:bg-owl-light hover:text-owl-primary transition-colors">
+                  <i class="pi pi-user text-xs text-owl-primary w-4"></i>
+                  Personal Information
+                </a>
+
+                <a routerLink="/my-tickets" (click)="dropdownOpen.set(false)"
+                   class="flex items-center gap-3 px-4 py-2.5 text-sm text-owl-dark hover:bg-owl-light hover:text-owl-primary transition-colors">
+                  <i class="pi pi-ticket text-xs text-owl-primary w-4"></i>
+                  My Tickets
+                </a>
+
+                <a routerLink="/my-blogs" (click)="dropdownOpen.set(false)"
+                   class="flex items-center gap-3 px-4 py-2.5 text-sm text-owl-dark hover:bg-owl-light hover:text-owl-primary transition-colors">
+                  <i class="pi pi-file-edit text-xs text-owl-primary w-4"></i>
+                  My Blogs
+                </a>
+
+                <div class="border-t border-gray-100 my-1"></div>
+
+                <button (click)="logout()"
+                        class="flex items-center gap-3 px-4 py-2.5 text-sm text-owl-dark hover:bg-red-50 hover:text-red-500 transition-colors w-full text-left">
+                  <i class="pi pi-sign-out text-xs w-4"></i>
+                  Logout
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <button (click)="openLogin()"
+                  class="text-xs font-medium uppercase tracking-wider transition-colors"
+                  [class.text-white]="!isSticky()"
+                  [class.text-owl-dark]="isSticky()">
+            Sign In
+          </button>
+        }
+      </div>
+
+      <!-- Mobile menu toggle button -->
+      <button class="lg:hidden p-2" (click)="toggleMobile()" aria-label="Menu">
+        <div class="w-6 flex flex-col gap-1.5">
+          <span class="block h-0.5 transition-all"
+                [class.bg-white]="!isSticky()"
+                [class.bg-owl-dark]="isSticky()"
+                [class.rotate-45]="mobileOpen()"
+                [class.translate-y-2]="mobileOpen()"></span>
+          <span class="block h-0.5 transition-all"
+                [class.bg-white]="!isSticky()"
+                [class.bg-owl-dark]="isSticky()"
+                [class.opacity-0]="mobileOpen()"></span>
+          <span class="block h-0.5 transition-all"
+                [class.bg-white]="!isSticky()"
+                [class.bg-owl-dark]="isSticky()"
+                [class.-rotate-45]="mobileOpen()"
+                [class.-translate-y-2]="mobileOpen()"></span>
+        </div>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Mobile menu -->
+  @if (mobileOpen()) {
+    <div class="lg:hidden bg-owl-dark border-t border-white/10 px-6 pb-6">
+      <ul class="flex flex-col gap-4 list-none py-4">
+        @for (link of navLinks; track link.path) {
+          <li>
+            <a [routerLink]="link.path" (click)="closeMobile()"
+               class="text-white text-sm uppercase tracking-wider hover:text-owl-primary transition-colors">
+              {{ link.label }}
+            </a>
+          </li>
+        }
+      </ul>
+
+      <div class="flex flex-col gap-3 pt-2 border-t border-white/10">
+        <a routerLink="/reservation" (click)="closeMobile()"
+           class="bg-owl-primary text-white text-xs font-medium uppercase tracking-wider px-6 py-3 text-center hover:bg-owl-primary-dark transition-colors">
+          Book a Table
+        </a>
+
+        @if (auth.isLoggedIn()) {
+          <div class="border-t border-white/10 pt-3 space-y-2">
+            <p class="text-white/50 text-xs uppercase tracking-wider px-1">
+              {{ auth.user()?.firstName }} {{ auth.user()?.lastName }}
+            </p>
+
+            @if (auth.isAdmin()) {
+              <a routerLink="/admin" (click)="closeMobile()"
+                 class="block text-white/70 text-xs uppercase tracking-wider hover:text-owl-primary transition-colors">
+                Admin Panel
+              </a>
+            }
+
+            <a routerLink="/profile" (click)="closeMobile()"
+               class="block text-white/70 text-xs uppercase tracking-wider hover:text-owl-primary transition-colors">
+              Personal Information
+            </a>
+
+            <a routerLink="/my-tickets" (click)="closeMobile()"
+               class="block text-white/70 text-xs uppercase tracking-wider hover:text-owl-primary transition-colors">
+              My Tickets
+            </a>
+
+            <a routerLink="/my-blogs" (click)="closeMobile()"
+               class="block text-white/70 text-xs uppercase tracking-wider hover:text-owl-primary transition-colors">
+              My Blogs
+            </a>
+
+            <button (click)="logout(); closeMobile()"
+                    class="block text-white/70 text-xs uppercase tracking-wider hover:text-owl-primary transition-colors text-left">
+              Logout
+            </button>
+          </div>
+        } @else {
+          <button (click)="openLogin()"
+                  class="text-white/70 text-xs uppercase tracking-wider text-center hover:text-owl-primary transition-colors">
+            Sign In
+          </button>
+        }
+      </div>
+    </div>
+  }
+</header>
