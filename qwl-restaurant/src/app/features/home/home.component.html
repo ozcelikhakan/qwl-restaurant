@@ -1,0 +1,316 @@
+<!-- ══ HERO SLIDER ══════════════════════════════════════════ -->
+<section class="relative h-screen min-h-[600px] overflow-hidden">
+  @for (slide of slides; track slide.bg; let i = $index) {
+    <div class="hero-slide"
+         [class.active]="currentSlide() === i"
+         [style.background-image]="'url(' + slide.bg + ')'">
+
+      <!-- Hero slide content -->
+      <div class="slide-content">
+        <p owlAnimate="fadeInUp" [animateDelay]="200"
+           class="mb-2 text-5xl font-cursive text-owl-primary">
+          {{ slide.sub }}
+        </p>
+
+        <h1 owlAnimate="fadeInUp" [animateDelay]="400"
+            class="mb-6 text-5xl leading-tight text-white font-heading md:text-7xl">
+          {{ slide.title }} <span class="text-owl-primary">{{ slide.titleHighlight }}</span>
+        </h1>
+
+        <a [routerLink]="slide.ctaLink" owlAnimate="fadeInUp" [animateDelay]="600"
+           class="px-10 py-4 text-sm btn-owl btn-filled">
+          {{ slide.ctaLabel }}
+        </a>
+      </div>
+    </div>
+  }
+
+  <!-- Slider dots -->
+  <div class="absolute z-10 flex gap-3 -translate-x-1/2 bottom-8 left-1/2">
+    @for (slide of slides; track slide.bg; let i = $index) {
+      <button (click)="goToSlide(i)"
+              [class]="'w-3 h-3 rounded-full transition-all duration-300 ' + (currentSlide() === i ? 'bg-owl-primary' : 'bg-white/50')">
+      </button>
+    }
+  </div>
+
+  <!-- Previous and next slide buttons -->
+  <button (click)="goToSlide((currentSlide() - 1 + slides.length) % slides.length)"
+          class="absolute z-10 flex items-center justify-center w-12 h-12 text-white transition-colors -translate-y-1/2 left-4 top-1/2 bg-black/30 hover:bg-owl-primary">
+    <i class="pi pi-chevron-left"></i>
+  </button>
+
+  <button (click)="goToSlide((currentSlide() + 1) % slides.length)"
+          class="absolute z-10 flex items-center justify-center w-12 h-12 text-white transition-colors -translate-y-1/2 right-4 top-1/2 bg-black/30 hover:bg-owl-primary">
+    <i class="pi pi-chevron-right"></i>
+  </button>
+</section>
+
+<!-- ══ ABOUT ══════════════════════════════════════════════ -->
+<section class="bg-white section-pad">
+  <div class="container px-6 mx-auto">
+    <div class="grid items-center grid-cols-1 gap-16 lg:grid-cols-2">
+
+      <!-- About text content -->
+      <div owlAnimate="fadeInLeft">
+        <div class="mb-6 text-left area-title">
+          <span class="sub-title">Our Story</span>
+          <h2>Taste &amp; <span class="text-owl-primary">Elegance</span></h2>
+        </div>
+
+        <p class="mb-6 leading-relaxed text-owl-text">
+          At OWL Restaurant, we bring together the freshest ingredients with traditional recipes
+          to offer you an unforgettable dining experience. Every plate is a work of art from the
+          heart of our kitchen.
+        </p>
+
+        <p class="mb-8 leading-relaxed text-owl-text">
+          Our chefs bring local flavors to your table with an international presentation, inspired
+          by cuisines from around the world. Every moment you spend with your family, loved ones or
+          business partners is special to us.
+        </p>
+
+        <a routerLink="/about" class="btn-owl">Learn More</a>
+      </div>
+
+      <!-- About images -->
+      <div owlAnimate="fadeInRight" class="grid grid-cols-2 gap-4">
+        <img src="assets/images/about/about_one.jpg" alt="About OWL"
+             class="object-cover w-full h-64">
+        <img src="assets/images/about/about_two.jpg" alt="About OWL"
+             class="object-cover w-full h-64 mt-8">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROMOTIONS ══════════════════════════════════════════ -->
+<section class="relative section-pad"
+         style="background-image: url('assets/images/promotions/promotions_area_bg_1.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+  <div class="absolute inset-0 bg-owl-dark/85"></div>
+
+  <div class="container relative z-10 px-6 mx-auto">
+
+    <!-- Promotions section title -->
+    <div class="mb-12 area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Special Offers</span>
+      <h2 class="text-white">Promotions</h2>
+    </div>
+
+    <!-- Promotion cards -->
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      @for (promo of promotions; track promo.name; let i = $index) {
+        <div owlAnimate="fadeInUp" [animateDelay]="i * 150" class="text-center">
+          <div class="mb-5 promo-img">
+            <img [src]="promo.img" [alt]="promo.name">
+
+            <!-- Promotion price badge -->
+            <div class="price-badge">
+              <span class="block text-xs uppercase tracking-wider mb-0.5 opacity-90">{{ promo.name }}</span>
+              <span>{{ promo.price }}</span>
+            </div>
+          </div>
+
+          <h4 class="mb-3 text-xl text-white font-heading">{{ promo.name }}</h4>
+        </div>
+      }
+    </div>
+
+    <!-- Reservation call-to-action -->
+    <div class="mt-10 text-center" owlAnimate="fadeInUp" [animateDelay]="450">
+      <a routerLink="/reservation" class="px-10 py-4 text-sm btn-owl btn-filled">Book a Table</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FILTERABLE MENU ═══════════════════════════════════════ -->
+<section class="section-pad bg-owl-light">
+  <div class="container px-6 mx-auto">
+
+    <!-- Menu section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Delicious</span>
+      <h2>Today's <span class="text-owl-primary">Menu</span></h2>
+    </div>
+
+    <!-- Menu filter tabs -->
+    <div class="flex flex-wrap justify-center gap-2 mb-10">
+      @for (f of filters; track f.key) {
+        <button (click)="setFilter(f.key)"
+                class="px-5 py-2 text-xs font-medium tracking-wider uppercase transition-all duration-200 border"
+                [class.bg-owl-primary]="activeFilter() === f.key"
+                [class.text-white]="activeFilter() === f.key"
+                [class.border-owl-primary]="activeFilter() === f.key"
+                [class.border-gray-300]="activeFilter() !== f.key"
+                [class.text-owl-text]="activeFilter() !== f.key"
+                [class.hover:border-owl-primary]="activeFilter() !== f.key">
+          {{ f.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Menu item grid -->
+    <div class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+      @for (item of filteredMenu; track item.img) {
+        <div class="bg-white group">
+          <div class="menu-item-img">
+            <img [src]="item.img" [alt]="item.name">
+          </div>
+
+          <div class="p-4 text-center">
+            <h4 class="mb-1 text-base font-heading text-owl-dark">{{ item.name }}</h4>
+            <p class="text-sm font-semibold text-owl-primary">₺{{ item.price }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- View all menu button -->
+    <div class="mt-10 text-center">
+      <a routerLink="/menu" class="btn-owl">View Full Menu</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EVENTS ══════════════════════════════════════════════ -->
+<section class="relative bg-fixed bg-center bg-cover event-bg section-pad">
+  <div class="absolute inset-0 bg-owl-dark/80"></div>
+
+  <div class="container relative z-10 px-6 mx-auto">
+
+    <!-- Events section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Upcoming</span>
+      <h2 class="text-white">Events</h2>
+    </div>
+
+    <!-- Event list -->
+    <div class="max-w-4xl mx-auto space-y-6">
+      @for (ev of staticEvents; track ev.title; let i = $index) {
+        <div owlAnimate="fadeInUp" [animateDelay]="i * 150"
+             class="flex flex-col gap-6 p-5 transition-colors border sm:flex-row bg-white/5 border-white/10 hover:border-owl-primary/50">
+
+          <!-- Event image -->
+          <div class="flex-shrink-0 w-full sm:w-48">
+            <img [src]="ev.img" [alt]="ev.title" class="object-cover w-full h-36">
+          </div>
+
+          <!-- Event date badge -->
+          <div class="self-start flex-shrink-0 px-5 py-3 text-center text-white bg-owl-primary">
+            <span class="block text-3xl font-bold leading-none font-heading">{{ ev.day }}</span>
+            <span class="text-xs tracking-wider uppercase">{{ ev.month }}</span>
+          </div>
+
+          <!-- Event content -->
+          <div class="flex-1">
+            <h3 class="mb-2 text-xl text-white font-heading">
+              <a [routerLink]="['/events']" class="transition-colors hover:text-owl-primary">{{ ev.title }}</a>
+            </h3>
+
+            <p class="mb-3 text-xs text-owl-primary">{{ ev.date }} — {{ ev.location }}</p>
+            <p class="text-sm leading-relaxed text-white/60">{{ ev.desc }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- View all events button -->
+    <div class="mt-10 text-center">
+      <a routerLink="/events" class="btn-owl">All Events</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TEAM ════════════════════════════════════════════════ -->
+<section class="bg-white section-pad">
+  <div class="container px-6 mx-auto">
+
+    <!-- Team section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Amazing</span>
+      <h2>Our Chefs</h2>
+    </div>
+
+    <div class="relative">
+      <!-- Team slider -->
+      <div class="grid grid-cols-2 gap-6 md:grid-cols-4">
+        @for (member of visibleTeam; track member.img) {
+          <div class="text-center">
+            <div class="mb-4 team-img">
+              <img [src]="member.img" [alt]="member.name">
+
+              <!-- Team member social overlay -->
+              <div class="team-overlay">
+                <div class="flex gap-3">
+                  @for (s of ['pi-facebook','pi-twitter','pi-instagram']; track s) {
+                    <a href="#" class="flex items-center justify-center text-white transition-all w-9 h-9 bg-white/20 hover:bg-white hover:text-owl-primary">
+                      <i [class]="'pi ' + s + ' text-sm'"></i>
+                    </a>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <h4 class="text-lg font-heading text-owl-dark">{{ member.name }}</h4>
+            <p class="mt-1 text-xs tracking-wider uppercase text-owl-primary">{{ member.role }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- Team navigation arrows -->
+      <button (click)="prevTeam()"
+              class="absolute flex items-center justify-center w-10 h-10 text-white transition-colors -translate-y-1/2 -left-5 top-1/2 bg-owl-primary hover:bg-owl-dark">
+        <i class="text-sm pi pi-chevron-left"></i>
+      </button>
+
+      <button (click)="nextTeam()"
+              class="absolute flex items-center justify-center w-10 h-10 text-white transition-colors -translate-y-1/2 -right-5 top-1/2 bg-owl-primary hover:bg-owl-dark">
+        <i class="text-sm pi pi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BLOG ════════════════════════════════════════════════ -->
+<section class="section-pad bg-owl-light">
+  <div class="container px-6 mx-auto">
+
+    <!-- Blog section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">News</span>
+      <h2>From the Blog</h2>
+    </div>
+
+    <!-- Blog cards -->
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+      @for (post of staticBlogs; track post.slug; let i = $index) {
+        <div owlAnimate="fadeInUp" [animateDelay]="i * 150" class="bg-white group">
+          <div class="blog-img">
+            <img [src]="post.img" [alt]="post.title">
+          </div>
+
+          <div class="p-6 text-center">
+            <span class="inline-block px-4 py-1 mb-3 text-xs tracking-wider text-white uppercase bg-owl-primary">
+              {{ post.tag }}
+            </span>
+
+            <h3 class="mb-3 text-xl leading-snug font-heading text-owl-dark">
+              <a [routerLink]="['/blog', post.slug]"
+                 class="transition-colors hover:text-owl-primary">{{ post.title }}</a>
+            </h3>
+
+            <p class="text-xs text-owl-text">
+              {{ post.date }} &mdash;
+              <span class="text-owl-primary">{{ post.comments }} comments</span>
+            </p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- View all blog posts button -->
+    <div class="mt-10 text-center">
+      <a routerLink="/blog" class="btn-owl">All Posts</a>
+    </div>
+  </div>
+</section>

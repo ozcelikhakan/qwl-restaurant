@@ -1,0 +1,150 @@
+/* ── Hero Slider ───────────────────────────────────────── */
+
+/* Represents each full-screen hero slide */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1s ease;
+
+  /* Makes the active slide visible */
+  &.active {
+    opacity: 1;
+  }
+
+  /* Centers the slide text and adds a dark overlay */
+  .slide-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+  }
+}
+
+/* ── Promotions ────────────────────────────────────────── */
+
+/* Promotion image wrapper */
+.promo-img {
+  position: relative;
+  overflow: hidden;
+
+  /* Promotion image styling */
+  img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  /* Slightly zooms the image on hover */
+  &:hover img {
+    transform: scale(1.05);
+  }
+
+  /* Price badge displayed at the bottom of the promotion image */
+  .price-badge {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(200, 169, 110, 0.9);
+    color: #fff;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    /* Highlights the price text inside the badge */
+    span {
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+  }
+}
+
+/* ── Event Area ────────────────────────────────────────── */
+
+/* Background image used in the events section */
+.event-bg {
+  background-image: url('/assets/images/event/event_area_bg.jpg');
+}
+
+/* ── Menu Item ─────────────────────────────────────────── */
+
+/* Menu item image wrapper */
+.menu-item-img {
+  overflow: hidden;
+  position: relative;
+
+  /* Menu item image styling */
+  img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  /* Zooms the menu image on hover */
+  &:hover img {
+    transform: scale(1.08);
+  }
+}
+
+/* ── Team Member ───────────────────────────────────────── */
+
+/* Team member image wrapper */
+.team-img {
+  position: relative;
+  overflow: hidden;
+
+  /* Team member image styling */
+  img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+  }
+
+  /* Overlay shown when hovering over a team member image */
+  .team-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(200, 169, 110, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Shows the social overlay on hover */
+  &:hover .team-overlay {
+    opacity: 1;
+  }
+}
+
+/* ── Blog ──────────────────────────────────────────────── */
+
+/* Blog image wrapper */
+.blog-img {
+  overflow: hidden;
+
+  /* Blog image styling */
+  img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  /* Slightly zooms the blog image on hover */
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
