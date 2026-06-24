@@ -1,0 +1,21 @@
+@keyframes shake-red {
+    0%, 100% {transform: translateX(0);     border-color: #ef4444;}
+    20%      {transform: translateX(-5px);  border-color: #ef4444;}
+    40%      {transform: translateX(5px);   border-color: #ef4444;}
+    60%      {transform: translateX(-4px);  border-color: #ef4444;}
+    80%      {transform: translateX(3px);   border-color: #ef4444;}
+}
+
+.guest-shake {
+    animation: shake-red 0.4s ease-in-out;
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+.reservation-left {
+    position: relative;
+    background-image: url('/assets/images/singlepage_bg/reservation_bg.jpg');
+    background-size: cover;
+    background-position: center;
+    min-height: 600px;
+}

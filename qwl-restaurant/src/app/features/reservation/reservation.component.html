@@ -1,0 +1,321 @@
+<!-- ══ PAGE BANNER ══════════════════════════════════════════ -->
+<app-page-banner
+  title="Reservation"
+  bgImage="assets/images/about/about_counter_bgr.jpg"
+  [breadcrumbs]="breadcrumbs">
+</app-page-banner>
+
+<!-- ══ STEP FORM ══════════════════════════════════════════════ -->
+<section class="section-pad bg-white">
+  <div class="container mx-auto px-6">
+    <div class="max-w-xl mx-auto">
+
+      @if (!submitted()) {
+
+        <!-- Section title -->
+        <div class="mb-8" owlAnimate="fadeInUp">
+          <span class="sub-title">Table</span>
+          <h2 class="font-heading text-2xl text-owl-dark">
+            Make a <span class="text-owl-primary">Reservation</span>
+          </h2>
+        </div>
+
+        <!-- Step indicator -->
+        <div class="flex items-center mb-10" owlAnimate="fadeInUp" [animateDelay]="60">
+          @for (step of steps; track step.num; let last = $last) {
+            <div class="flex items-center" [class]="!last ? 'flex-1' : ''">
+              <!-- Step circle -->
+              <div class="flex flex-col items-center">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 flex-shrink-0"
+                     [class]="currentStep() > step.num
+                       ? 'bg-owl-primary text-white'
+                       : currentStep() === step.num
+                         ? 'bg-owl-primary text-white ring-4 ring-owl-primary/20'
+                         : 'border-2 border-gray-300 text-gray-400'">
+                  @if (currentStep() > step.num) {
+                    <i class="pi pi-check text-xs"></i>
+                  } @else {
+                    {{ step.num }}
+                  }
+                </div>
+                <span class="text-xs mt-1.5 whitespace-nowrap"
+                      [class]="currentStep() >= step.num ? 'text-owl-primary font-medium' : 'text-gray-400'">
+                  {{ step.label }}
+                </span>
+              </div>
+
+              <!-- Connector line between steps -->
+              @if (!last) {
+                <div class="flex-1 h-px mx-2 mb-5 transition-all duration-500"
+                     [class]="currentStep() > step.num ? 'bg-owl-primary' : 'bg-gray-200'">
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <form #reservationForm="ngForm" (ngSubmit)="onSubmit()">
+
+          <!-- ══ STEP 1: Guest Information ══ -->
+          @if (currentStep() === 1) {
+            <div class="space-y-4" owlAnimate="fadeInUp">
+
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-owl-primary">
+                  <i class="pi pi-user text-xs"></i>
+                </span>
+                <input type="text" name="firstName" [(ngModel)]="form.firstName"
+                       class="w-full border border-gray-200 pl-9 pr-4 py-3.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"
+                       placeholder="Your first name">
+                <label class="block text-xs text-gray-400 mt-1 ml-1">First Name</label>
+              </div>
+
+              <div class="relative">
+                <span class="absolute left-3 top-[14px] text-owl-primary">
+                  <i class="pi pi-envelope text-xs"></i>
+                </span>
+                <input type="email" name="email" [(ngModel)]="form.email"
+                       class="w-full border border-gray-200 pl-9 pr-4 py-3.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"
+                       placeholder="Your email address">
+                <label class="block text-xs text-gray-400 mt-1 ml-1">Confirmation email will be sent to this address</label>
+              </div>
+
+              <div class="relative">
+                <span class="absolute left-3 top-[14px] text-owl-primary">
+                  <i class="pi pi-phone text-xs"></i>
+                </span>
+                <input type="tel" name="phone" [(ngModel)]="form.phone"
+                       class="w-full border border-gray-200 pl-9 pr-4 py-3.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"
+                       placeholder="Your phone number">
+                <label class="block text-xs text-gray-400 mt-1 ml-1">We may call you if needed</label>
+              </div>
+
+              <button type="button" (click)="nextStep()"
+                      class="w-full bg-owl-primary text-white text-xs font-medium uppercase tracking-widest py-4 hover:bg-owl-dark transition-colors mt-2">
+                Next <i class="pi pi-arrow-right ml-2 text-xs"></i>
+              </button>
+            </div>
+          }
+
+          <!-- ══ STEP 2: Date & Time ══ -->
+          @if (currentStep() === 2) {
+            <div class="space-y-4" owlAnimate="fadeInUp">
+
+              <div class="relative">
+                <span class="absolute left-3 top-[14px] text-owl-primary">
+                  <i class="pi pi-calendar text-xs"></i>
+                </span>
+                <input type="date" name="date" [(ngModel)]="form.date" (change)="onDateChange()"
+                       class="w-full border border-gray-200 pl-9 pr-4 py-3.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors">
+                <label class="block text-xs text-gray-400 mt-1 ml-1">Reservation date</label>
+              </div>
+
+              <div>
+                <label class="block text-xs text-gray-500 uppercase tracking-wider mb-3 ml-1">Session</label>
+                <div class="grid grid-cols-4 gap-2">
+                  @for (slot of timeSlots; track slot) {
+                    <button type="button" (click)="selectTimeSlot(slot)"
+                            class="py-2.5 text-xs font-medium border transition-all duration-200"
+                            [class]="form.time === slot
+                              ? 'bg-owl-primary text-white border-owl-primary'
+                              : 'border-gray-200 text-owl-text hover:border-owl-primary'">
+                      {{ slot }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Guest count selector -->
+              <div>
+                <label class="block text-xs text-gray-500 uppercase tracking-wider mb-3 ml-1">Guest Count</label>
+                <div class="flex items-center border w-36 transition-colors"
+                     [class.border-gray-200]="!guestShake()"
+                     [class.guest-shake]="guestShake()">
+                  <button type="button" (click)="decreaseGuests()"
+                          class="px-4 py-3 text-owl-text hover:text-owl-primary hover:bg-owl-light transition-colors text-lg leading-none">
+                    −
+                  </button>
+                  <span class="flex-1 text-center text-sm font-semibold transition-colors"
+                        [class.text-owl-dark]="!guestShake()"
+                        [class.text-red-500]="guestShake()">{{ form.guests }}</span>
+                  <button type="button" (click)="increaseGuests()"
+                          class="px-4 py-3 text-owl-text hover:text-owl-primary hover:bg-owl-light transition-colors text-lg leading-none">
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <!-- Table selection with floor plan -->
+              @if (selectedTimeSlot()) {
+                <div class="border border-gray-200" owlAnimate="fadeInUp">
+
+                  <!-- Floor plan header -->
+                  <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
+                    <p class="text-xs font-medium uppercase tracking-wider text-owl-dark">
+                      <i class="pi pi-map text-owl-primary mr-1.5"></i>
+                      {{ form.time }} — Restaurant Floor Plan
+                    </p>
+                    @if (loadingTables()) {
+                      <span class="flex items-center gap-1.5 text-xs text-owl-text">
+                        <i class="pi pi-spin pi-spinner text-owl-primary text-xs"></i> Loading...
+                      </span>
+                    }
+                  </div>
+
+                  <!-- Floor plan -->
+                  <div class="p-4">
+                    <app-floor-plan
+                      [occupiedLabels]="occupiedLabels()"
+                      [selectedLabel]="selectedLabel()"
+                      [requiredCapacity]="requiredCapacity()"
+                      [interactive]="true"
+                      (tableClick)="onTableClick($event)"
+                      (incompatibleClick)="onTableIncompatible()">
+                    </app-floor-plan>
+                  </div>
+
+                  <!-- Selected table information -->
+                  <div class="px-4 pb-4">
+                    @if (selectedTable(); as t) {
+                      <div class="flex items-center gap-2 px-4 py-2.5 bg-owl-light text-xs">
+                        <i class="pi pi-check-circle text-owl-primary flex-shrink-0"></i>
+                        <span class="text-owl-dark">
+                          <strong>{{ t.label }}</strong> assigned
+                          <span class="text-owl-text ml-1">({{ t.capacity }} seats)</span>
+                        </span>
+                        <span class="ml-auto text-gray-400">Click to choose a different table</span>
+                      </div>
+                    } @else {
+                      <div class="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-xs text-red-500">
+                        <i class="pi pi-exclamation-triangle flex-shrink-0"></i>
+                        No suitable table is available for this session
+                      </div>
+                    }
+                  </div>
+
+                </div>
+              }
+
+              <div class="flex gap-3 mt-2">
+                <button type="button" (click)="prevStep()"
+                        class="flex-1 border border-gray-300 text-owl-text text-xs font-medium uppercase tracking-widest py-4 hover:border-owl-primary hover:text-owl-primary transition-colors">
+                  <i class="pi pi-arrow-left mr-2 text-xs"></i> Back
+                </button>
+                <button type="button" (click)="nextStep()"
+                        class="flex-1 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest py-4 hover:bg-owl-dark transition-colors">
+                  Next <i class="pi pi-arrow-right ml-2 text-xs"></i>
+                </button>
+              </div>
+            </div>
+          }
+
+          <!-- ══ STEP 3: Confirmation ══ -->
+          @if (currentStep() === 3) {
+            <div class="space-y-4" owlAnimate="fadeInUp">
+
+              <!-- Reservation summary -->
+              <div class="bg-owl-light p-5 space-y-2 mb-2">
+                <h5 class="text-xs font-medium uppercase tracking-wider text-owl-dark mb-3">Reservation Summary</h5>
+                <div class="flex justify-between text-sm">
+                  <span class="text-owl-text flex items-center gap-2"><i class="pi pi-user text-owl-primary text-xs"></i> Name</span>
+                  <span class="text-owl-dark font-medium">{{ form.firstName || '—' }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-owl-text flex items-center gap-2"><i class="pi pi-calendar text-owl-primary text-xs"></i> Date</span>
+                  <span class="text-owl-dark font-medium">{{ form.date || '—' }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-owl-text flex items-center gap-2"><i class="pi pi-clock text-owl-primary text-xs"></i> Time</span>
+                  <span class="text-owl-dark font-medium">{{ form.time || '—' }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-owl-text flex items-center gap-2"><i class="pi pi-users text-owl-primary text-xs"></i> Guests</span>
+                  <span class="text-owl-dark font-medium">{{ form.guests }} guests</span>
+                </div>
+                @if (selectedTable(); as t) {
+                  <div class="flex justify-between text-sm">
+                    <span class="text-owl-text flex items-center gap-2"><i class="pi pi-th-large text-owl-primary text-xs"></i> Table</span>
+                    <span class="text-owl-dark font-medium">{{ t.label }} ({{ t.capacity }} seats)</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Special request field -->
+              <div class="relative">
+                <span class="absolute left-3 top-3.5 text-owl-primary">
+                  <i class="pi pi-comment text-xs"></i>
+                </span>
+                <textarea name="message" [(ngModel)]="form.message" rows="3"
+                          class="w-full border border-gray-200 pl-9 pr-4 py-3 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none resize-none"
+                          placeholder="Allergy, birthday, special request..."></textarea>
+              </div>
+
+              @if (submitError()) {
+                <p class="text-xs text-red-500 bg-red-50 px-4 py-2.5">{{ submitError() }}</p>
+              }
+
+              <div class="flex gap-3">
+                <button type="button" (click)="prevStep()" [disabled]="submitting()"
+                        class="flex-1 border border-gray-300 text-owl-text text-xs font-medium uppercase tracking-widest py-4 hover:border-owl-primary hover:text-owl-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  <i class="pi pi-arrow-left mr-2 text-xs"></i> Back
+                </button>
+                <button type="submit" [disabled]="submitting()"
+                        class="flex-1 flex items-center justify-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest py-4 hover:bg-owl-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                  @if (submitting()) { <i class="pi pi-spin pi-spinner text-xs"></i> }
+                  Reserve Now <i class="pi pi-check ml-1 text-xs"></i>
+                </button>
+              </div>
+
+              <p class="text-xs text-center text-owl-text">
+                We will send a confirmation notification to {{ form.email || 'your email address' }}.
+              </p>
+
+            </div>
+          }
+
+        </form>
+
+      } @else {
+        <!-- Success state -->
+        <div class="text-center py-12" owlAnimate="fadeInUp">
+          <i class="pi pi-check-circle text-5xl text-owl-primary mb-4 block"></i>
+          <h3 class="font-heading text-2xl text-owl-dark mb-3">Your Reservation Has Been Received!</h3>
+          <p class="text-sm text-owl-text mb-6">
+            We will send a confirmation to <strong>{{ form.email }}</strong> as soon as possible.
+          </p>
+          <button (click)="submitted.set(false); currentStep.set(1)" class="btn-owl text-xs">
+            New Reservation
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ INFO BOXES ════════════════════════════════════════════ -->
+<section class="section-pad bg-owl-light">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+
+      <div class="bg-white p-6 border-l-4 border-owl-primary shadow-sm" owlAnimate="fadeInUp">
+        <h4 class="font-heading text-base text-owl-dark mb-3">Phone Reservation</h4>
+        <p class="text-owl-text text-sm leading-relaxed">
+          We accept reservations for lunch and dinner.
+          You can call
+          <a href="tel:+902120000000" class="text-owl-primary font-medium">+90 212 000 00 00</a>
+          between Monday and Friday, 09:00–19:00.
+        </p>
+      </div>
+
+      <div class="bg-white p-6 border-l-4 border-owl-primary shadow-sm" owlAnimate="fadeInUp" [animateDelay]="80">
+        <h4 class="font-heading text-base text-owl-dark mb-3">Private Events</h4>
+        <p class="text-owl-text text-sm leading-relaxed">
+          We are here for your special occasions such as birthdays, weddings or meetings.
+          Please inform us in advance for organizations with more than 15 guests.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>

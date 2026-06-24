@@ -45,24 +45,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/blog/blog-detail/blog-detail.component').then(m => m.BlogDetailComponent)
   },
   
-
-  /**
-   * Public reservation page route.
-   
   {
     path: 'reservation',
     loadComponent: () => import('./features/reservation/reservation.component').then(m => m.ReservationComponent)
   },
-  */
 
-  /**
-   * Public contact page route.
-   
   {
     path: 'contact',
     loadComponent: () => import('./features/contact/contact.component').then(m => m.ContactComponent)
   },
-  */
+
 
   /**
    * User profile page route.
