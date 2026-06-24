@@ -1,1 +1,170 @@
-<p>contact works!</p>
+<!-- ══ PAGE BANNER ══════════════════════════════════════════ -->
+<app-page-banner
+  title="Contact"
+  bgImage="assets/images/contact_page_barner.jpg"
+  [breadcrumbs]="breadcrumbs">
+</app-page-banner>
+
+<!-- ══ INFORMATION CARDS ════════════════════════════════════ -->
+<section class="bg-owl-light section-pad">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      @for (card of infoCards; track card.title; let i = $index) {
+        <div class="group bg-white p-6 border-l-4 border-owl-primary shadow-sm flex gap-4
+                    transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default"
+             owlAnimate="fadeInUp" [animateDelay]="i * 80">
+          <div class="flex-shrink-0 w-10 h-10 bg-owl-primary flex items-center justify-center mt-0.5
+                      transition-transform duration-300 group-hover:scale-110">
+            <i [class]="'pi ' + card.icon + ' text-white text-sm'"></i>
+          </div>
+
+          <div>
+            <h4 class="font-heading text-sm text-owl-dark mb-2 uppercase tracking-wider">
+              {{ card.title }}
+            </h4>
+
+            @for (line of card.lines; track line) {
+              <p class="text-owl-text text-sm leading-relaxed">
+                {{ line }}
+              </p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT FORM + MAP ═══════════════════════════════════ -->
+<section class="section-pad bg-white">
+  <div class="container mx-auto px-6">
+
+    <!-- Contact section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Get in Touch</span>
+      <h2>Send a <span class="text-owl-primary">Message</span></h2>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+
+      <!-- Contact form column -->
+      <div class="lg:col-span-3" owlAnimate="fadeInUp" [animateDelay]="60">
+
+        @if (!submitted()) {
+          <form #contactForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="space-y-4">
+
+              <!-- Name and email fields -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="relative contact-field">
+                  <span class="absolute left-3 top-[14px] text-owl-primary">
+                    <i class="pi pi-user text-xs"></i>
+                  </span>
+                  <input type="text"
+                         name="name"
+                         [(ngModel)]="form.name"
+                         required
+                         class="w-full border border-gray-200 pl-9 pr-4 py-3.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"
+                         placeholder="Your full name">
+                </div>
+
+                <div class="relative contact-field">
+                  <span class="absolute left-3 top-[14px] text-owl-primary">
+                    <i class="pi pi-envelope text-xs"></i>
+                  </span>
+                  <input type="email"
+                         name="email"
+                         [(ngModel)]="form.email"
+                         required
+                         class="w-full border border-gray-200 pl-9 pr-4 py-3.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"
+                         placeholder="Your email address">
+                </div>
+              </div>
+
+              <!-- Subject field -->
+              <div class="relative contact-field">
+                <span class="absolute left-3 top-[14px] text-owl-primary">
+                  <i class="pi pi-tag text-xs"></i>
+                </span>
+                <input type="text"
+                       name="subject"
+                       [(ngModel)]="form.subject"
+                       class="w-full border border-gray-200 pl-9 pr-4 py-3.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"
+                       placeholder="Subject">
+              </div>
+
+              <!-- Message field -->
+              <div class="relative contact-field">
+                <span class="absolute left-3 top-3.5 text-owl-primary">
+                  <i class="pi pi-comment text-xs"></i>
+                </span>
+                <textarea name="message"
+                          [(ngModel)]="form.message"
+                          rows="6"
+                          required
+                          class="w-full border border-gray-200 pl-9 pr-4 py-3 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none resize-none transition-colors"
+                          placeholder="Your message..."></textarea>
+              </div>
+
+              <!-- Submission error message -->
+              @if (submitError()) {
+                <p class="text-xs text-red-500 bg-red-50 px-4 py-2.5">
+                  {{ submitError() }}
+                </p>
+              }
+
+              <!-- Submit button -->
+              <button type="submit"
+                      [disabled]="submitting()"
+                      class="group flex items-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-10 py-4 hover:bg-owl-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                @if (submitting()) {
+                  <i class="pi pi-spin pi-spinner text-xs"></i>
+                }
+                Send
+                <i class="pi pi-send text-xs transition-transform duration-300 group-hover:translate-x-1"></i>
+              </button>
+
+            </div>
+          </form>
+
+        } @else {
+          <!-- Success state -->
+          <div class="flex flex-col items-start py-10" owlAnimate="fadeInUp">
+            <div class="w-14 h-14 bg-owl-primary flex items-center justify-center mb-5">
+              <i class="pi pi-check text-white text-xl"></i>
+            </div>
+
+            <h3 class="font-heading text-xl text-owl-dark mb-3">
+              Your Message Has Been Sent!
+            </h3>
+
+            <p class="text-sm text-owl-text mb-6 leading-relaxed">
+              We will get back to you at <strong>{{ form.email }}</strong> as soon as possible.
+            </p>
+
+            <button (click)="resetForm()" class="btn-owl text-xs">
+              New Message
+            </button>
+          </div>
+        }
+
+      </div>
+
+      <!-- Map column -->
+      <div class="lg:col-span-2" owlAnimate="fadeInUp" [animateDelay]="120">
+        <div class="overflow-hidden h-full transition-shadow duration-300 hover:shadow-xl" style="min-height: 420px">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3010.273!2d28.8556!3d41.0392!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAyJzIxLjEiTiAyOMKwNTEnMjAuMiJF!5e0!3m2!1str!2str!4v1"
+            width="100%"
+            height="100%"
+            style="border:0; display:block; min-height:420px"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
