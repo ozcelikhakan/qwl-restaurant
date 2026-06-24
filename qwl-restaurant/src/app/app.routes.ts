@@ -35,25 +35,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/events/event-detail/event-detail.component').then(m => m.EventDetailComponent)
   },
 
-
-  /**
-   * Public blog list page route.
-   
   {
     path: 'blog',
     loadComponent: () => import('./features/blog/blog-list/blog-list.component').then(m => m.BlogListComponent)
   },
-  */
-
-  /**
-   * Public blog detail page route.
-   * The blog slug is passed as a route parameter.
-   
+     
   {
     path: 'blog/:slug',
     loadComponent: () => import('./features/blog/blog-detail/blog-detail.component').then(m => m.BlogDetailComponent)
   },
-  */
+  
 
   /**
    * Public reservation page route.

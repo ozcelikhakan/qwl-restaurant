@@ -1,0 +1,181 @@
+<!-- ══ PAGE BANNER ══════════════════════════════════════════ -->
+<app-page-banner
+  title="Blog"
+  bgImage="assets/images/blog/blog_page_barner.jpg"
+  [breadcrumbs]="breadcrumbs">
+</app-page-banner>
+
+<!-- ══ BLOG CONTENT ══════════════════════════════════════════ -->
+<section class="bg-white section-pad">
+  <div class="container px-6 mx-auto">
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
+
+      <!-- Main content column -->
+      <div class="space-y-10 lg:col-span-2">
+
+        <!-- Loading state -->
+        @if (loading()) {
+          <div class="py-16 text-center text-owl-text">
+            <i class="block mb-3 text-4xl pi pi-spin pi-spinner text-owl-primary"></i>
+            <p class="text-sm">Loading...</p>
+          </div>
+
+        <!-- Error state -->
+        } @else if (error()) {
+          <div class="py-16 text-center text-red-500">
+            <i class="block mb-3 text-4xl pi pi-exclamation-triangle"></i>
+            <p class="text-sm">{{ error() }}</p>
+          </div>
+
+        <!-- Empty state -->
+        } @else if (posts().length === 0) {
+          <div class="py-16 text-center text-owl-text">
+            <i class="block mb-4 text-5xl text-gray-300 pi pi-file-edit"></i>
+            <p class="text-sm">No published blog posts yet.</p>
+          </div>
+
+        <!-- Blog post list -->
+        } @else {
+          @for (post of posts(); track post.slug; let i = $index) {
+            <article owlAnimate="fadeInUp" [animateDelay]="i * 60"
+                     class="group">
+
+              <!-- Blog cover image -->
+              <div class="mb-5 overflow-hidden">
+                <img [src]="post.img" [alt]="post.title"
+                     class="w-full aspect-[16/7] object-cover transition-transform duration-500 group-hover:scale-105">
+              </div>
+
+              <!-- Blog metadata -->
+              <div class="flex flex-wrap items-center gap-4 mb-3 text-xs text-owl-text">
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-calendar text-owl-primary"></i>
+                  {{ post.date }}
+                </span>
+
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-user text-owl-primary"></i>
+                  {{ post.author }}
+                </span>
+
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-tag text-owl-primary"></i>
+                  {{ post.category }}
+                </span>
+
+                <span class="flex items-center gap-1">
+                  <i class="pi pi-comment text-owl-primary"></i>
+                  {{ post.commentsCount }} Comments
+                </span>
+              </div>
+
+              <!-- Blog title -->
+              <h2 class="mb-3 text-xl transition-colors font-heading text-owl-dark hover:text-owl-primary">
+                <a [routerLink]="['/blog', post.slug]">{{ post.title }}</a>
+              </h2>
+
+              <!-- Blog excerpt -->
+              <p class="mb-4 text-sm leading-relaxed text-owl-text">
+                {{ post.excerpt }}
+              </p>
+
+              <!-- Read more link -->
+              <a [routerLink]="['/blog', post.slug]" class="text-xs btn-owl">
+                Read More
+              </a>
+
+              <!-- Divider between blog posts -->
+              @if (i < posts().length - 1) {
+                <hr class="mt-10 border-gray-200 border-dashed">
+              }
+            </article>
+          }
+        } <!-- end @else -->
+      </div>
+
+      <!-- Sidebar column -->
+      <aside class="space-y-8" owlAnimate="fadeInUp" [animateDelay]="100">
+
+        <!-- Search widget -->
+        <div class="p-6 bg-owl-light">
+          <h4 class="mb-4 text-sm tracking-wider uppercase font-heading text-owl-dark">
+            Search
+          </h4>
+
+          <div class="flex">
+            <input type="text"
+                   placeholder="Search..."
+                   class="flex-1 border border-gray-300 bg-white px-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none">
+
+            <button class="px-4 text-white transition-colors bg-owl-primary hover:bg-owl-dark">
+              <i class="text-sm pi pi-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Categories widget -->
+        <div class="p-6 bg-owl-light">
+          <h4 class="pb-3 mb-4 text-sm tracking-wider uppercase border-b border-gray-300 border-dashed font-heading text-owl-dark">
+            Categories
+          </h4>
+
+          <ul class="space-y-2">
+            @for (cat of categories; track cat.name) {
+              <li class="flex items-center justify-between py-2 border-b border-gray-200 border-dashed last:border-0">
+                <a href="#" class="flex items-center gap-2 text-sm transition-colors text-owl-text hover:text-owl-primary">
+                  <i class="text-xs pi pi-angle-right text-owl-primary"></i>
+                  {{ cat.name }}
+                </a>
+
+                <span class="text-xs text-white bg-owl-primary px-2 py-0.5">
+                  {{ cat.count }}
+                </span>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Recent posts widget -->
+        <div class="p-6 bg-owl-light">
+          <h4 class="pb-3 mb-4 text-sm tracking-wider uppercase border-b border-gray-300 border-dashed font-heading text-owl-dark">
+            Recent Posts
+          </h4>
+
+          <div class="space-y-4">
+            @for (p of recentPosts; track p.slug) {
+              <a [routerLink]="['/blog', p.slug]"
+                 class="flex gap-3 group/recent">
+                <img [src]="p.thumb" [alt]="p.title"
+                     class="flex-shrink-0 object-cover w-16 h-16">
+
+                <div>
+                  <p class="mb-1 text-xs text-owl-text">{{ p.date }}</p>
+                  <p class="text-sm leading-snug transition-colors text-owl-dark group-hover/recent:text-owl-primary">
+                    {{ p.title }}
+                  </p>
+                </div>
+              </a>
+            }
+          </div>
+        </div>
+
+        <!-- Tags widget -->
+        <div class="p-6 bg-owl-light">
+          <h4 class="pb-3 mb-4 text-sm tracking-wider uppercase border-b border-gray-300 border-dashed font-heading text-owl-dark">
+            Tags
+          </h4>
+
+          <div class="flex flex-wrap gap-2">
+            @for (tag of allTags; track tag) {
+              <a href="#"
+                 class="border border-gray-300 text-xs text-owl-text px-3 py-1.5 hover:bg-owl-primary hover:text-white hover:border-owl-primary transition-all">
+                {{ tag }}
+              </a>
+            }
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</section>

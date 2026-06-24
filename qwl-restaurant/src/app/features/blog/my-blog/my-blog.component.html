@@ -1,0 +1,284 @@
+<!-- ══ PAGE BANNER ══════════════════════════════════════════ -->
+<app-page-banner
+  title="My Blogs"
+  bgImage="assets/images/blog/blog_page_barner.jpg"
+  [breadcrumbs]="breadcrumbs">
+</app-page-banner>
+
+<!-- ══ CONTENT ══════════════════════════════════════════════ -->
+<section class="section-pad bg-white">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+      <!-- Main content column -->
+      <div class="lg:col-span-2 space-y-10">
+
+        <!-- Loading state -->
+        @if (loading()) {
+          <div class="py-16 text-center text-owl-text">
+            <i class="pi pi-spin pi-spinner text-4xl text-owl-primary block mb-3"></i>
+            <p class="text-sm">Loading...</p>
+          </div>
+
+        <!-- Error state -->
+        } @else if (error()) {
+          <div class="py-16 text-center text-red-500">
+            <i class="pi pi-exclamation-triangle text-4xl block mb-3"></i>
+            <p class="text-sm">{{ error() }}</p>
+          </div>
+
+        <!-- Empty state shown when the user has not submitted any blog posts yet -->
+        } @else if (blogs().length === 0) {
+          <div class="py-20 text-center">
+            <i class="pi pi-file-edit text-5xl text-gray-300 block mb-5"></i>
+            <h3 class="font-heading text-xl text-owl-dark mb-2">
+              You haven’t submitted any blog posts yet.
+            </h3>
+            <p class="text-sm text-owl-text mb-6">
+              Write your first blog post. It will be published after admin approval.
+            </p>
+            <button (click)="openAdd()"
+                    class="inline-flex items-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-8 py-3.5 hover:bg-owl-dark transition-colors">
+              <i class="pi pi-pencil text-xs"></i> Write Your First Blog
+            </button>
+          </div>
+
+        <!-- Blog list -->
+        } @else {
+          @for (blog of blogs(); track blog.id; let i = $index) {
+            <article class="group">
+
+              <!-- Blog cover image -->
+              <div class="overflow-hidden mb-5">
+                @if (blog.coverImageUrl) {
+                  <img [src]="blog.coverImageUrl" [alt]="blog.title"
+                       class="w-full aspect-[16/7] object-cover transition-transform duration-500 group-hover:scale-105">
+                } @else {
+                  <div class="w-full aspect-[16/7] bg-owl-light flex items-center justify-center">
+                    <i class="pi pi-image text-5xl text-gray-300"></i>
+                  </div>
+                }
+              </div>
+
+              <!-- Status and date row -->
+              <div class="flex items-center justify-between gap-4 mb-3">
+                <div class="flex flex-wrap items-center gap-4 text-xs text-owl-text">
+                  @if (blog.publishedAt) {
+                    <span class="flex items-center gap-1">
+                      <i class="pi pi-calendar text-owl-primary"></i>
+                      {{ blog.publishedAt.substring(0, 10) }}
+                    </span>
+                  } @else {
+                    <span class="flex items-center gap-1">
+                      <i class="pi pi-calendar text-owl-primary"></i>
+                      Submitted
+                    </span>
+                  }
+
+                  @if (blog.commentCount > 0) {
+                    <span class="flex items-center gap-1">
+                      <i class="pi pi-comment text-owl-primary"></i>
+                      {{ blog.commentCount }} Comments
+                    </span>
+                  }
+                </div>
+
+                @if (blog.publishedAt) {
+                  <span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 bg-green-100 text-green-700 font-medium flex-shrink-0">
+                    <i class="pi pi-check-circle" style="font-size:10px"></i> Published
+                  </span>
+                } @else {
+                  <span class="inline-flex items-center gap-1 text-xs px-2.5 py-1 bg-amber-100 text-amber-700 font-medium flex-shrink-0">
+                    <i class="pi pi-clock" style="font-size:10px"></i> Pending Approval
+                  </span>
+                }
+              </div>
+
+              <!-- Tags -->
+              @if (blog.tags.length > 0) {
+                <div class="flex flex-wrap gap-1.5 mb-3">
+                  @for (tag of blog.tags; track tag) {
+                    <span class="text-xs bg-owl-light text-owl-text px-2 py-0.5">{{ tag }}</span>
+                  }
+                </div>
+              }
+
+              <!-- Blog title -->
+              <h2 class="font-heading text-xl text-owl-dark mb-3">
+                @if (blog.publishedAt) {
+                  <a [routerLink]="['/blog', blog.slug]"
+                     class="hover:text-owl-primary transition-colors">{{ blog.title }}</a>
+                } @else {
+                  {{ blog.title }}
+                }
+              </h2>
+
+              <!-- Blog summary -->
+              @if (blog.summary) {
+                <p class="text-owl-text text-sm leading-relaxed mb-4 line-clamp-3">{{ blog.summary }}</p>
+              }
+
+              <!-- Read more link shown only for published posts -->
+              @if (blog.publishedAt) {
+                <a [routerLink]="['/blog', blog.slug]" class="btn-owl text-xs">
+                  Read More
+                </a>
+              }
+
+              <!-- Divider between blog posts -->
+              @if (i < blogs().length - 1) {
+                <hr class="mt-10 border-dashed border-gray-200">
+              }
+            </article>
+          }
+        }
+
+      </div>
+
+      <!-- Sidebar column -->
+      <aside class="space-y-8">
+
+        <!-- New blog widget -->
+        <div class="bg-owl-light p-6">
+          <h4 class="font-heading text-sm text-owl-dark uppercase tracking-wider mb-3">
+            New Blog
+          </h4>
+          <p class="text-xs text-owl-text mb-4 leading-relaxed">
+            Submit your blog post. It only needs admin approval to be published.
+          </p>
+          <button (click)="openAdd()"
+                  class="w-full flex items-center justify-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-6 py-3.5 hover:bg-owl-dark transition-colors">
+            <i class="pi pi-pencil text-xs"></i> Write Blog
+          </button>
+        </div>
+
+        <!-- Statistics widget -->
+        @if (blogs().length > 0) {
+          <div class="bg-owl-light p-6">
+            <h4 class="font-heading text-sm text-owl-dark uppercase tracking-wider mb-4 pb-3 border-b border-dashed border-gray-300">
+              Statistics
+            </h4>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center py-1 border-b border-dashed border-gray-200">
+                <span class="text-sm text-owl-text">Total Posts</span>
+                <span class="font-bold text-owl-dark">{{ blogs().length }}</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-dashed border-gray-200">
+                <span class="text-sm text-owl-text">Published</span>
+                <span class="font-bold text-green-600">{{ publishedCount() }}</span>
+              </div>
+              <div class="flex justify-between items-center py-1">
+                <span class="text-sm text-owl-text">Pending Approval</span>
+                <span class="font-bold text-amber-600">{{ pendingCount() }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Blog list link widget -->
+        <div class="bg-owl-light p-6">
+          <h4 class="font-heading text-sm text-owl-dark uppercase tracking-wider mb-4 pb-3 border-b border-dashed border-gray-300">
+            Blog List
+          </h4>
+          <a routerLink="/blog"
+             class="flex items-center gap-2 text-sm text-owl-primary hover:text-owl-dark transition-colors">
+            <i class="pi pi-arrow-right text-xs"></i> Go to all blogs
+          </a>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WRITE BLOG MODAL ══════════════════════════════════════ -->
+@if (modalOpen()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+       style="background:rgba(0,0,0,0.6)"
+       (click)="$event.target === $event.currentTarget && modalOpen.set(false)">
+
+    <div class="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+
+      <!-- Modal header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-heading text-lg text-owl-dark">Write Blog</h3>
+        <button (click)="modalOpen.set(false)" class="text-gray-400 hover:text-owl-dark transition-colors">
+          <i class="pi pi-times text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Blog form -->
+      <div class="p-6 space-y-4">
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Title *</label>
+          <input type="text" [ngModel]="form().title" (ngModelChange)="updateField('title', $event)"
+                 class="w-full border border-gray-200 px-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors"
+                 placeholder="Blog title">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Tags</label>
+          <div class="flex gap-2 mb-2">
+            <input type="text" [ngModel]="tagInput()" (ngModelChange)="tagInput.set($event)"
+                   (keydown.enter)="addTag()"
+                   class="flex-1 border border-gray-200 px-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none"
+                   placeholder="Type a tag and press Enter">
+            <button (click)="addTag()"
+                    class="bg-owl-primary text-white px-4 text-sm hover:bg-owl-dark transition-colors">
+              <i class="pi pi-plus"></i>
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            @for (tag of form().tags; track $index) {
+              <span class="flex items-center gap-1 bg-owl-light text-owl-dark text-xs px-2.5 py-1">
+                {{ tag }}
+                <button (click)="removeTag($index)" class="text-gray-400 hover:text-red-400 transition-colors ml-0.5">
+                  <i class="pi pi-times" style="font-size:9px"></i>
+                </button>
+              </span>
+            }
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Summary</label>
+          <textarea rows="3" [ngModel]="form().summary" (ngModelChange)="updateField('summary', $event)"
+                    class="w-full border border-gray-200 px-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors resize-none"
+                    placeholder="Short description (optional)"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Cover Image URL</label>
+          <input type="url" [ngModel]="form().img" (ngModelChange)="updateField('img', $event)"
+                 class="w-full border border-gray-200 px-4 py-2.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"
+                 placeholder="https://example.com/image.jpg (optional)">
+        </div>
+
+        <!-- Save error message -->
+        @if (saveError()) {
+          <div class="flex items-center gap-2 text-xs text-red-500 bg-red-50 px-4 py-2.5">
+            <i class="pi pi-exclamation-triangle flex-shrink-0"></i>
+            {{ saveError() }}
+          </div>
+        }
+
+        <!-- Modal actions -->
+        <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
+          <button (click)="modalOpen.set(false)"
+                  class="text-xs text-owl-text uppercase tracking-wider hover:text-owl-dark transition-colors px-4 py-2.5">
+            Cancel
+          </button>
+          <button (click)="save()" [disabled]="saving()"
+                  class="flex items-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-8 py-3 hover:bg-owl-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+            @if (saving()) {
+              <i class="pi pi-spin pi-spinner text-xs"></i>
+            }
+            Submit Blog
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+}

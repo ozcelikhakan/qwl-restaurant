@@ -1,0 +1,247 @@
+<!-- ══ PAGE BANNER ══════════════════════════════════════════ -->
+<app-page-banner
+  title="Blog Post"
+  bgImage="assets/images/blog/blog_details_page_barner.jpg"
+  [breadcrumbs]="breadcrumbs">
+</app-page-banner>
+
+@if (post(); as p) {
+
+<!-- ══ BLOG DETAIL ════════════════════════════════════════════ -->
+<section class="section-pad bg-white">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+      <!-- Main content column -->
+      <div class="lg:col-span-2">
+
+        <!-- Blog cover image -->
+        <div class="overflow-hidden mb-6" owlAnimate="fadeInUp">
+          <img [src]="p.img" [alt]="p.title"
+               class="w-full aspect-[16/7] object-cover">
+        </div>
+
+        <!-- Blog metadata -->
+        <div class="flex flex-wrap gap-4 text-xs text-owl-text mb-4" owlAnimate="fadeInUp" [animateDelay]="60">
+          <span class="flex items-center gap-1">
+            <i class="pi pi-calendar text-owl-primary"></i>
+            {{ p.date }}
+          </span>
+
+          <span class="flex items-center gap-1">
+            <i class="pi pi-user text-owl-primary"></i>
+            {{ p.author }}
+          </span>
+
+          @if (p.category) {
+            <span class="flex items-center gap-1">
+              <i class="pi pi-tag text-owl-primary"></i>
+              {{ p.category }}
+            </span>
+          }
+
+          <span class="flex items-center gap-1">
+            <i class="pi pi-comment text-owl-primary"></i>
+            {{ p.commentsCount }} Comments
+          </span>
+        </div>
+
+        <!-- Blog title -->
+        <h2 class="font-heading text-2xl text-owl-dark mb-5" owlAnimate="fadeInUp" [animateDelay]="80">
+          {{ p.title }}
+        </h2>
+
+        <!-- Blog content -->
+        <div class="text-owl-text text-sm leading-relaxed whitespace-pre-line mb-6"
+             owlAnimate="fadeInUp" [animateDelay]="100">
+          {{ p.content }}
+        </div>
+
+        <!-- Tags and social share links -->
+        <div class="flex flex-wrap items-center justify-between gap-4 py-5 border-t border-b border-dashed border-gray-200 mb-8"
+             owlAnimate="fadeInUp" [animateDelay]="120">
+          <div class="flex items-center flex-wrap gap-2">
+            <span class="text-xs font-medium uppercase tracking-wider text-owl-dark">Tags:</span>
+
+            @for (tag of p.tags; track tag) {
+              <span class="border border-gray-300 text-xs text-owl-text px-3 py-1 hover:border-owl-primary hover:text-owl-primary transition-colors cursor-pointer">
+                {{ tag }}
+              </span>
+            }
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-medium uppercase tracking-wider text-owl-dark">Share:</span>
+
+            <a href="#" class="w-8 h-8 flex items-center justify-center border border-gray-300 text-owl-text hover:bg-owl-primary hover:text-white hover:border-owl-primary transition-all">
+              <i class="pi pi-facebook text-xs"></i>
+            </a>
+
+            <a href="#" class="w-8 h-8 flex items-center justify-center border border-gray-300 text-owl-text hover:bg-owl-primary hover:text-white hover:border-owl-primary transition-all">
+              <i class="pi pi-twitter text-xs"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Comments section -->
+        <div owlAnimate="fadeInUp" [animateDelay]="140">
+          <h3 class="font-heading text-lg text-owl-dark mb-6">
+            {{ p.commentsCount }} Comments
+          </h3>
+
+          @if (p.comments.length > 0) {
+            <div class="space-y-6 mb-10">
+              @for (comment of p.comments; track comment.id) {
+                <div class="flex gap-4">
+                  <div class="w-12 h-12 rounded-full bg-owl-primary flex items-center justify-center flex-shrink-0">
+                    <i class="pi pi-user text-white"></i>
+                  </div>
+
+                  <div class="flex-1 bg-owl-light p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <h5 class="font-heading text-sm text-owl-dark">
+                        {{ comment.authorName }}
+                      </h5>
+
+                      <span class="text-xs text-owl-text">
+                        {{ comment.createdAt | date:'d MMMM yyyy':'':'en-US' }}
+                      </span>
+                    </div>
+
+                    <p class="text-sm text-owl-text leading-relaxed">
+                      {{ comment.content }}
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Comment form -->
+          @if (commentSent()) {
+            <div class="bg-green-50 border border-green-200 p-5 text-center">
+              <i class="pi pi-check-circle text-green-500 text-3xl mb-2 block"></i>
+              <p class="text-sm text-owl-dark">
+                Your comment is awaiting approval. Thank you!
+              </p>
+            </div>
+          } @else {
+            <div class="bg-owl-light p-6">
+              <h3 class="font-heading text-lg text-owl-dark mb-6">
+                Leave a Comment
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <input type="text"
+                       [(ngModel)]="commentForm.name"
+                       name="cName"
+                       placeholder="Your name *"
+                       class="border border-gray-300 bg-white px-4 py-3 text-sm focus:border-owl-primary focus:outline-none">
+
+                <input type="email"
+                       [(ngModel)]="commentForm.email"
+                       name="cEmail"
+                       placeholder="Email"
+                       class="border border-gray-300 bg-white px-4 py-3 text-sm focus:border-owl-primary focus:outline-none">
+              </div>
+
+              <textarea rows="5"
+                        [(ngModel)]="commentForm.text"
+                        name="cText"
+                        placeholder="Your comment... *"
+                        class="w-full border border-gray-300 bg-white px-4 py-3 text-sm focus:border-owl-primary focus:outline-none resize-none mb-4"></textarea>
+
+              @if (commentErr()) {
+                <p class="text-xs text-red-500 mb-3">
+                  {{ commentErr() }}
+                </p>
+              }
+
+              <button (click)="submitComment()" class="btn-owl text-xs">
+                Submit Comment
+              </button>
+            </div>
+          }
+        </div>
+
+      </div>
+
+      <!-- Sidebar column -->
+      <aside class="space-y-8" owlAnimate="fadeInUp" [animateDelay]="100">
+
+        <!-- Search widget -->
+        <div class="bg-owl-light p-6">
+          <h4 class="font-heading text-sm text-owl-dark uppercase tracking-wider mb-4">
+            Search
+          </h4>
+
+          <div class="flex">
+            <input type="text"
+                   placeholder="Search..."
+                   class="flex-1 border border-gray-300 bg-white px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none">
+
+            <button class="bg-owl-primary text-white px-4 hover:bg-owl-dark transition-colors">
+              <i class="pi pi-search text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Categories widget -->
+        <div class="bg-owl-light p-6">
+          <h4 class="font-heading text-sm text-owl-dark uppercase tracking-wider mb-4 pb-3 border-b border-dashed border-gray-300">
+            Categories
+          </h4>
+
+          <ul class="space-y-2">
+            @for (cat of categories; track cat.name) {
+              <li class="flex justify-between items-center py-2 border-b border-dashed border-gray-200 last:border-0">
+                <a href="#" class="text-sm text-owl-text hover:text-owl-primary transition-colors flex items-center gap-2">
+                  <i class="pi pi-angle-right text-owl-primary text-xs"></i>
+                  {{ cat.name }}
+                </a>
+
+                <span class="text-xs text-white bg-owl-primary px-2 py-0.5">
+                  {{ cat.count }}
+                </span>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Tags widget -->
+        <div class="bg-owl-light p-6">
+          <h4 class="font-heading text-sm text-owl-dark uppercase tracking-wider mb-4 pb-3 border-b border-dashed border-gray-300">
+            Tags
+          </h4>
+
+          <div class="flex flex-wrap gap-2">
+            @for (tag of allTags; track tag) {
+              <a href="#" class="border border-gray-300 text-xs text-owl-text px-3 py-1.5 hover:bg-owl-primary hover:text-white hover:border-owl-primary transition-all">
+                {{ tag }}
+              </a>
+            }
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</section>
+
+} @else if (loading()) {
+  <!-- Loading state -->
+  <section class="section-pad bg-white">
+    <div class="container mx-auto px-6 py-16 text-center text-owl-text">
+      <i class="pi pi-spin pi-spinner text-4xl text-owl-primary block mb-3"></i>
+      <p class="text-sm">Loading...</p>
+    </div>
+  </section>
+} @else {
+  <!-- Error state -->
+  <section class="section-pad bg-white">
+    <div class="container mx-auto px-6 py-16 text-center text-red-500">
+      <i class="pi pi-exclamation-triangle text-4xl block mb-3"></i>
+      <p class="text-sm">{{ error() }}</p>
+    </div>
+  </section>
+}
