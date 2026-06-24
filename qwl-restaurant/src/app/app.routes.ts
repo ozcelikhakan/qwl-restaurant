@@ -14,40 +14,27 @@ export const routes: Routes = [
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
   },
 
-  
-   
   {
     path: 'about',
     loadComponent: () => import('./features/about/about.component').then(m => m.AboutComponent)
   },
   
-
-  
- 
-  /*
   {
     path: 'menu',
     loadComponent: () => import('./features/menu/menu.component').then(m => m.MenuComponent)
   },
 
-  /**
-   * Public event list page route.
-   
+  
   {
     path: 'events',
     loadComponent: () => import('./features/events/event-list/event-list.component').then(m => m.EventListComponent)
   },
-  */
-
-  /**
-   * Public event detail page route.
-   * The event ID is passed as a route parameter.
-   
+  
   {
     path: 'events/:id',
     loadComponent: () => import('./features/events/event-detail/event-detail.component').then(m => m.EventDetailComponent)
   },
-  */
+
 
   /**
    * Public blog list page route.

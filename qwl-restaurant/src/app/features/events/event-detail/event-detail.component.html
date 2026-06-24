@@ -1,0 +1,322 @@
+<!-- ══ PAGE BANNER ══════════════════════════════════════════ -->
+<app-page-banner
+  title="Event Details"
+  bgImage="assets/images/event/event_details_page_barner_bg.jpg"
+  [breadcrumbs]="breadcrumbs">
+</app-page-banner>
+
+@if (event(); as e) {
+
+<!-- ══ MAIN EVENT SECTION ════════════════════════════════════ -->
+<section class="section-pad bg-white">
+  <div class="container mx-auto px-6">
+
+    <!-- Full-width event hero image -->
+    <div class="mb-10" owlAnimate="fadeInUp">
+      <img src="assets/images/event/event_details.jpg" alt="Event"
+           class="w-full h-80 object-cover">
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+      <!-- Left content column -->
+      <div class="lg:col-span-8">
+
+        <!-- Date and event title -->
+        <div class="flex gap-6 items-start mb-6" owlAnimate="fadeInUp">
+          <div class="flex-shrink-0 bg-owl-primary text-white text-center px-4 py-3" style="min-width:5rem">
+            <div class="text-3xl font-bold leading-none">{{ e.day }}</div>
+            <div class="text-sm uppercase tracking-wider mt-1">{{ e.month }}</div>
+            <div class="text-xs opacity-75 mt-0.5">{{ e.year }}</div>
+          </div>
+
+          <div>
+            <h3 class="font-heading text-2xl text-owl-dark mb-2">{{ e.title }}</h3>
+
+            <p class="text-owl-primary text-xs uppercase tracking-wider flex items-center gap-1">
+              <i class="pi pi-map-marker text-xs"></i>
+              {{ e.venue }}
+            </p>
+
+            <span class="inline-block mt-2 text-white text-xs px-3 py-1 uppercase tracking-wider"
+                  [class]="statusClass(e.status)">
+              {{ statusLabel(e.status) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Event description -->
+        <p class="text-owl-text text-sm leading-relaxed mb-8" owlAnimate="fadeInUp" [animateDelay]="80">
+          {{ e.desc }}
+        </p>
+
+        <!-- Event details list -->
+        <div owlAnimate="fadeInUp" [animateDelay]="120">
+          <h4 class="font-heading text-lg text-owl-dark mb-4">Event Details</h4>
+
+          <ul class="space-y-2 mb-8">
+            @for (item of eventDetails; track item) {
+              <li class="flex items-start gap-2 text-sm text-owl-text">
+                <i class="pi pi-check text-owl-primary mt-0.5 flex-shrink-0"></i>
+                {{ item }}
+              </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Tags and social share links -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-dashed border-gray-200"
+             owlAnimate="fadeInUp" [animateDelay]="160">
+          <div class="flex items-center flex-wrap gap-2">
+            <span class="text-xs font-medium uppercase tracking-wider text-owl-dark">Tags:</span>
+
+            @for (tag of tags; track tag) {
+              <span class="border border-gray-300 text-xs text-owl-text px-3 py-1 hover:border-owl-primary hover:text-owl-primary transition-colors cursor-pointer">
+                {{ tag }}
+              </span>
+            }
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-medium uppercase tracking-wider text-owl-dark">Share:</span>
+
+            <a href="#" class="w-8 h-8 flex items-center justify-center border border-gray-300 text-owl-text hover:bg-owl-primary hover:text-white hover:border-owl-primary transition-all">
+              <i class="pi pi-facebook text-xs"></i>
+            </a>
+
+            <a href="#" class="w-8 h-8 flex items-center justify-center border border-gray-300 text-owl-text hover:bg-owl-primary hover:text-white hover:border-owl-primary transition-all">
+              <i class="pi pi-twitter text-xs"></i>
+            </a>
+
+            <a href="#" class="w-8 h-8 flex items-center justify-center border border-gray-300 text-owl-text hover:bg-owl-primary hover:text-white hover:border-owl-primary transition-all">
+              <i class="pi pi-instagram text-xs"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right sidebar column -->
+      <div class="lg:col-span-4" owlAnimate="fadeInUp" [animateDelay]="100">
+        <div class="bg-owl-light p-6">
+
+          <h4 class="font-heading text-sm text-owl-dark uppercase tracking-wider mb-5 pb-3 border-b border-dashed border-gray-300">
+            Buy Ticket
+          </h4>
+
+          <!-- Event countdown -->
+          @if (!isPast()) {
+            <div class="mb-5">
+              <p class="text-xs text-owl-text uppercase tracking-wider mb-3 text-center">
+                Time Left Until Event
+              </p>
+
+              <div class="grid grid-cols-4 gap-2 text-center">
+                @for (unit of [
+                  { val: countdown().days,    label: 'Days' },
+                  { val: countdown().hours,   label: 'Hours' },
+                  { val: countdown().minutes, label: 'Min' },
+                  { val: countdown().seconds, label: 'Sec' }
+                ]; track unit.label) {
+                  <div class="bg-owl-primary text-white py-2 px-1">
+                    <div class="text-xl font-bold leading-none">
+                      {{ unit.val | number:'2.0-0' }}
+                    </div>
+
+                    <div class="text-xs opacity-75 mt-1">{{ unit.label }}</div>
+                  </div>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="mb-5 text-center py-3 bg-gray-100 text-xs text-gray-500 uppercase tracking-wider">
+              This event has ended
+            </div>
+          }
+
+          <!-- Time slot selection -->
+          <div class="mb-5 pb-5 border-b border-dashed border-gray-300">
+            <label class="block text-xs text-owl-text uppercase tracking-wider mb-3">
+              Select Session
+            </label>
+
+            <div class="grid grid-cols-4 gap-2">
+              @for (slot of timeSlots; track slot) {
+                <button (click)="selectedTime.set(slot)"
+                        class="py-2 text-xs font-medium border transition-all duration-200"
+                        [class]="selectedTime() === slot
+                          ? 'bg-owl-primary text-white border-owl-primary'
+                          : 'border-gray-300 text-owl-text hover:border-owl-primary'">
+                  {{ slot }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Successful ticket purchase state -->
+          @if (booked()) {
+            <div class="bg-green-50 border border-green-200 p-5 text-center">
+              <i class="pi pi-check-circle text-green-500 text-3xl mb-3 block"></i>
+
+              <p class="font-heading text-sm text-owl-dark mb-1">
+                Your Ticket Has Been Purchased!
+              </p>
+
+              <p class="text-xs text-owl-text">
+                {{ ticketQty() }} ticket(s) successfully reserved.
+              </p>
+
+              <p class="text-xs text-owl-text mt-1">
+                Session: {{ selectedTime() }}
+              </p>
+            </div>
+          } @else {
+
+          <!-- Capacity information -->
+          <ul class="space-y-3 mb-4 text-sm">
+            <li class="flex justify-between">
+              <span class="text-owl-text">Total Capacity</span>
+              <span class="font-semibold text-owl-dark">{{ capacity() }}</span>
+            </li>
+
+            <li class="flex justify-between">
+              <span class="text-owl-text">Sold</span>
+              <span class="font-semibold text-owl-dark">{{ sold() }}</span>
+            </li>
+
+            <li class="flex justify-between">
+              <span class="text-owl-text">Remaining</span>
+              <span class="font-semibold text-green-600">{{ remaining() }}</span>
+            </li>
+          </ul>
+
+          <!-- Occupancy progress bar -->
+          <div class="w-full bg-gray-200 h-1.5 mb-5 rounded-full">
+            <div class="bg-owl-primary h-1.5 rounded-full"
+                 [style.width]="(sold() / capacity() * 100) + '%'"></div>
+          </div>
+
+          <!-- Price per person -->
+          <div class="flex justify-between items-center text-sm mb-4">
+            <span class="text-owl-text">Price Per Person</span>
+            <span class="text-owl-primary font-bold text-lg">₺{{ ticketPrice() }}</span>
+          </div>
+
+          <!-- Ticket quantity selector -->
+          <div class="mb-4">
+            <label class="block text-xs text-owl-text uppercase tracking-wider mb-2">
+              Ticket Quantity
+            </label>
+
+            <div class="flex items-center border border-gray-300 bg-white">
+              <button (click)="decreaseQty()"
+                      class="px-3 py-2.5 text-owl-text hover:text-owl-primary hover:bg-owl-light transition-colors text-lg leading-none">
+                −
+              </button>
+
+              <span class="flex-1 text-center text-sm font-semibold text-owl-dark">
+                {{ ticketQty() }}
+              </span>
+
+              <button (click)="increaseQty()"
+                      class="px-3 py-2.5 text-owl-text hover:text-owl-primary hover:bg-owl-light transition-colors text-lg leading-none">
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Total price -->
+          <div class="flex justify-between items-center mb-4 pb-4 border-t border-dashed border-gray-300 pt-4">
+            <span class="text-sm text-owl-text uppercase tracking-wider">Total</span>
+            <span class="text-owl-primary font-bold text-2xl">₺{{ total() }}</span>
+          </div>
+
+          <!-- Booking error message -->
+          @if (bookingError()) {
+            <div class="mb-3 flex items-center gap-2 text-xs text-red-500 bg-red-50 px-3 py-2">
+              <i class="pi pi-exclamation-triangle flex-shrink-0"></i>
+              {{ bookingError() }}
+            </div>
+          }
+
+          <!-- Call-to-action button -->
+          @if (isPast()) {
+            <div class="block w-full bg-gray-300 text-gray-500 text-xs font-medium uppercase tracking-wider text-center py-3.5 cursor-not-allowed">
+              Event Ended
+            </div>
+          } @else {
+            <button (click)="buyTicket()"
+                    class="block w-full bg-owl-primary text-white text-xs font-medium uppercase tracking-wider text-center py-3.5 hover:bg-owl-dark transition-colors">
+              Buy Ticket
+            </button>
+          }
+
+          } <!-- end @else booked -->
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ PARTICIPANTS ══════════════════════════════════════════ -->
+<section class="section-pad bg-owl-light">
+  <div class="container mx-auto px-6">
+
+    <!-- Participants section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Our Team</span>
+      <h2>Event <span class="text-owl-primary">Participants</span></h2>
+    </div>
+
+    <!-- Participants grid -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+      @for (member of participants(); track member.name; let i = $index) {
+        <div owlAnimate="fadeInUp" [animateDelay]="i * 80" class="text-center">
+          <div class="team-img mb-3">
+            @if (member.isUser && !member.img) {
+              <!-- Shows initials for a user without an avatar -->
+              <div class="w-full aspect-square bg-owl-primary flex items-center justify-center">
+                <span class="text-white text-2xl font-heading">
+                  {{ member.name.charAt(0) }}
+                </span>
+              </div>
+            } @else {
+              <img [src]="member.img" [alt]="member.name">
+            }
+
+            @if (!member.isUser) {
+              <div class="team-overlay flex flex-col items-center justify-center">
+                <div class="flex gap-2">
+                  <a href="#" class="w-7 h-7 bg-white/20 hover:bg-white flex items-center justify-center transition-colors">
+                    <i class="pi pi-facebook text-white hover:text-owl-primary text-xs"></i>
+                  </a>
+
+                  <a href="#" class="w-7 h-7 bg-white/20 hover:bg-white flex items-center justify-center transition-colors">
+                    <i class="pi pi-twitter text-white hover:text-owl-primary text-xs"></i>
+                  </a>
+
+                  <a href="#" class="w-7 h-7 bg-white/20 hover:bg-white flex items-center justify-center transition-colors">
+                    <i class="pi pi-instagram text-white hover:text-owl-primary text-xs"></i>
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+
+          <h4 class="font-heading text-sm text-owl-dark">{{ member.name }}</h4>
+
+          <p class="text-xs"
+             [class.text-owl-primary]="!member.isUser"
+             [class.text-green-600]="member.isUser">
+            {{ member.role }}
+          </p>
+        </div>
+      }
+    </div>
+
+  </div>
+</section>
+
+}
