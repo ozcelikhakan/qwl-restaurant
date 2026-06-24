@@ -1,0 +1,196 @@
+<!-- ══ PAGE BANNER ══════════════════════════════════════════ -->
+<app-page-banner
+  title="About Us"
+  bgImage="assets/images/about/about_counter_bgr.jpg"
+  [breadcrumbs]="breadcrumbs">
+</app-page-banner>
+
+<!-- ══ ABOUT STORY ══════════════════════════════════════════ -->
+<section class="section-pad bg-white">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      <!-- About text content -->
+      <div owlAnimate="fadeInLeft">
+        <div class="area-title text-left mb-6">
+          <span class="sub-title">Our Story</span>
+          <h2>Taste &amp; <span class="text-owl-primary">Elegance</span></h2>
+        </div>
+
+        <p class="text-owl-text leading-relaxed mb-4">
+          Our journey as OWL Restaurant started in a small family kitchen. Over the years,
+          with our growing team and evolving culinary vision, we created an unforgettable
+          place in the heart of Istanbul.
+        </p>
+
+        <p class="text-owl-text leading-relaxed mb-4">
+          Our chefs bring local flavors to your table with an international presentation,
+          inspired by cuisines from around the world. With the freshest seasonal products,
+          carefully selected ingredients and a passionate team, every plate becomes a work of art.
+        </p>
+
+        <p class="text-owl-text leading-relaxed mb-8">
+          Every moment you spend with your family, loved ones or business partners is special to us.
+          We are delighted to welcome you.
+        </p>
+
+        <!-- Signature image -->
+        <img src="assets/images/about/about_sign.png" alt="Signature" class="h-14 mb-8 opacity-80">
+
+        <!-- Reservation button -->
+        <div>
+          <a routerLink="/reservation" class="btn-owl btn-filled">Book a Table</a>
+        </div>
+      </div>
+
+      <!-- Circular video section -->
+      <div owlAnimate="fadeInRight" class="relative flex justify-center">
+        <div class="about-circle-wrap">
+          <img src="assets/images/about/about_circle.png" alt="OWL Restaurant" class="w-full max-w-sm mx-auto">
+
+          <!-- Play video button -->
+          <a href="https://www.youtube.com/watch?v=H6Yjc37axBY"
+             target="_blank"
+             rel="noopener"
+             class="play-btn"
+             aria-label="Watch Video">
+            <i class="pi pi-play text-white text-lg ml-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COUNTERS ══════════════════════════════════════════════ -->
+<section class="counter-section section-pad">
+  <div class="absolute inset-0 bg-owl-dark/80"></div>
+
+  <div class="relative z-10 container mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+
+      <!-- Counter cards -->
+      @for (counter of counters; track counter.label; let i = $index) {
+        <div owlAnimate="fadeInUp" [animateDelay]="i * 120" class="text-center">
+          <div class="mb-4">
+            <i [class]="'pi ' + counter.icon + ' text-owl-primary text-4xl'"></i>
+          </div>
+
+          <h3 class="font-heading text-4xl text-white font-bold mb-2">
+            {{ counter.value }}
+          </h3>
+
+          <p class="text-white/60 text-sm uppercase tracking-wider">
+            {{ counter.label }}
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ══ TEAM ═════════════════════════════════════════════════ -->
+<section class="section-pad bg-owl-light">
+  <div class="container mx-auto px-6">
+
+    <!-- Team section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Amazing</span>
+      <h2>Our Chefs</h2>
+    </div>
+
+    <!-- Team member grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+      @for (member of teamMembers; track member.img; let i = $index) {
+        <div owlAnimate="fadeInUp" [animateDelay]="i * 100" class="text-center">
+          <div class="team-img mb-4">
+            <img [src]="member.img" [alt]="member.name">
+
+            <!-- Social media overlay -->
+            <div class="team-overlay">
+              <div class="flex gap-2">
+                @for (s of ['pi-facebook','pi-twitter','pi-instagram']; track s) {
+                  <a href="#"
+                     class="w-8 h-8 bg-white/20 hover:bg-white flex items-center justify-center text-white hover:text-owl-primary transition-all">
+                    <i [class]="'pi ' + s + ' text-xs'"></i>
+                  </a>
+                }
+              </div>
+            </div>
+          </div>
+
+          <h4 class="font-heading text-base text-owl-dark">
+            {{ member.name }}
+          </h4>
+
+          <p class="text-owl-primary text-xs uppercase tracking-wider mt-1">
+            {{ member.role }}
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══════════════════════════════════════════ -->
+<section class="testimonial-section section-pad">
+  <div class="absolute inset-0 bg-owl-dark/85"></div>
+
+  <div class="relative z-10 container mx-auto px-6">
+
+    <!-- Testimonials section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Our Guests</span>
+      <h2 class="text-white">What Do They Say?</h2>
+    </div>
+
+    <div class="max-w-2xl mx-auto text-center relative">
+
+      <!-- Quote icon -->
+      <div class="mb-6">
+        <i class="pi pi-comment text-owl-primary text-5xl opacity-60"></i>
+      </div>
+
+      <!-- Testimonial slides -->
+      <div class="overflow-hidden">
+        @for (t of testimonials; track t.name; let i = $index) {
+          @if (activeTestimonial() === i) {
+            <div class="testimonial-slide">
+              <p class="text-white/80 text-lg leading-relaxed mb-8 italic">
+                "{{ t.text }}"
+              </p>
+
+              <h4 class="font-heading text-xl text-white mb-1">
+                {{ t.name }}
+              </h4>
+
+              <p class="text-owl-primary text-xs uppercase tracking-wider">
+                {{ t.role }}
+              </p>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Testimonial dots -->
+      <div class="flex justify-center gap-2 mt-8">
+        @for (t of testimonials; track t.name; let i = $index) {
+          <button (click)="activeTestimonial.set(i)"
+                  [class]="'w-2.5 h-2.5 rounded-full transition-all duration-300 ' + (activeTestimonial() === i ? 'bg-owl-primary' : 'bg-white/30')">
+          </button>
+        }
+      </div>
+
+      <!-- Testimonial navigation arrows -->
+      <button (click)="prevTestimonial()"
+              class="absolute -left-6 top-1/3 w-10 h-10 bg-owl-primary/30 hover:bg-owl-primary text-white flex items-center justify-center transition-colors">
+        <i class="pi pi-chevron-left text-sm"></i>
+      </button>
+
+      <button (click)="nextTestimonial()"
+              class="absolute -right-6 top-1/3 w-10 h-10 bg-owl-primary/30 hover:bg-owl-primary text-white flex items-center justify-center transition-colors">
+        <i class="pi pi-chevron-right text-sm"></i>
+      </button>
+    </div>
+  </div>
+</section>

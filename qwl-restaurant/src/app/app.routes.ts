@@ -14,18 +14,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
   },
 
-  /**
-   * Public about page route.
+  
    
   {
     path: 'about',
     loadComponent: () => import('./features/about/about.component').then(m => m.AboutComponent)
   },
-  */
+  
 
-  /**
-   * Public menu page route.
-   */
+  
+ 
   /*
   {
     path: 'menu',
