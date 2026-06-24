@@ -1,1 +1,185 @@
-<p>menu works!</p>
+<!-- ══ PAGE BANNER ══════════════════════════════════════════ -->
+<app-page-banner
+  title="Our Menu"
+  bgImage="assets/images/about/about_counter_bgr.jpg"
+  [breadcrumbs]="breadcrumbs">
+</app-page-banner>
+
+<!-- ══ DAILY SPECIALS ═══════════════════════════════════════ -->
+
+<!-- Loading state shown while menu data is being fetched -->
+@if (loading()) {
+  <section class="bg-white section-pad">
+    <div class="container px-6 py-16 mx-auto text-center text-owl-text">
+      <i class="block mb-3 text-4xl pi pi-spin pi-spinner text-owl-primary"></i>
+      <p class="text-sm">Loading menu...</p>
+    </div>
+  </section>
+
+<!-- Error state shown if menu data cannot be loaded -->
+} @else if (error()) {
+  <section class="bg-white section-pad">
+    <div class="container px-6 py-16 mx-auto text-center text-red-500">
+      <i class="block mb-3 text-4xl pi pi-exclamation-triangle"></i>
+      <p class="text-sm">{{ error() }}</p>
+    </div>
+  </section>
+
+<!-- Main content shown after menu data is successfully loaded -->
+} @else {
+<section class="section-pad bg-owl-light">
+  <div class="container px-6 mx-auto">
+
+    <!-- Daily specials section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Delicious</span>
+      <h2>Today's <span class="text-owl-primary">Special Offers</span></h2>
+    </div>
+
+    <!-- Daily specials slider wrapper -->
+    <div class="relative max-w-4xl mx-auto" owlAnimate="fadeInUp" [animateDelay]="100">
+
+      <!-- Daily special slides -->
+      @for (special of specials(); track special.title; let i = $index) {
+        @if (activeSpecial() === i) {
+          <div class="relative flex items-stretch special-slide" style="min-height: 280px">
+
+            <!-- Special image section -->
+            <div class="flex-shrink-0 w-3/5">
+              <img [src]="special.img" [alt]="special.title"
+                   class="object-cover w-full h-full" style="min-height: 280px">
+            </div>
+
+            <!-- Special details box -->
+            <div class="relative z-10 flex flex-col justify-center p-8 my-8 bg-white"
+                 style="margin-left: -4rem; box-shadow: -6px 6px 30px rgba(0,0,0,0.18)">
+              <span class="self-start inline-block px-3 py-1 mb-4 text-xs tracking-wider text-white uppercase bg-owl-primary">
+                {{ special.badge }}
+              </span>
+
+              <h3 class="mb-3 text-2xl font-heading text-owl-dark">
+                {{ special.title }}
+              </h3>
+
+              <p class="mb-6 text-sm leading-relaxed text-owl-text">
+                {{ special.desc }}
+              </p>
+
+              <a routerLink="/reservation" class="self-start text-xs btn-owl">
+                Book a Table
+              </a>
+            </div>
+
+          </div>
+        }
+      }
+
+    </div>
+
+    <!-- Daily specials slider dots -->
+    <div class="flex justify-center gap-2 mt-6">
+      @for (s of specials(); track s.title; let i = $index) {
+        <button (click)="activeSpecial.set(i)"
+                [class]="'w-2.5 h-2.5 rounded-full transition-all duration-300 ' + (activeSpecial() === i ? 'bg-owl-primary' : 'bg-gray-300')">
+        </button>
+      }
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ MENU GRID ════════════════════════════════════════════ -->
+<section class="bg-white section-pad">
+  <div class="container px-6 mx-auto">
+
+    <!-- Menu section title -->
+    <div class="area-title" owlAnimate="fadeInUp">
+      <span class="sub-title">Delicious</span>
+      <h2>Today's <span class="text-owl-primary">Menu</span></h2>
+    </div>
+
+    <!-- Menu category filter tabs -->
+    <div class="flex flex-wrap justify-center gap-2 mb-10" owlAnimate="fadeInUp">
+      @for (f of filters(); track f.key) {
+        <button (click)="setFilter(f.key)"
+                class="px-5 py-2 text-xs font-medium tracking-wider uppercase transition-all duration-200 border"
+                [class]="activeFilter() === f.key
+                  ? 'bg-owl-primary text-white border-owl-primary'
+                  : 'border-gray-300 text-owl-text hover:border-owl-primary'">
+          {{ f.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Menu item grid -->
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      @for (item of pagedItems(); track item.img; let i = $index) {
+        <div owlAnimate="fadeInUp" [animateDelay]="(i % 2) * 100"
+             class="relative flex items-stretch">
+
+          <!-- Menu item thumbnail -->
+          <div class="flex-shrink-0 w-36">
+            <img [src]="item.img" [alt]="item.name"
+                 class="object-cover w-full h-full" style="min-height:145px">
+          </div>
+
+          <!-- Menu item details box -->
+          <div class="relative z-10 flex flex-col justify-center flex-1 p-4 my-4 bg-white"
+               style="margin-left:-1.25rem; box-shadow:-4px 4px 18px rgba(0,0,0,0.13)">
+
+            <!-- Menu item name and price -->
+            <div class="flex items-start justify-between gap-2 pb-2 mb-2 border-b border-gray-200 border-dashed">
+              <h3 class="text-base leading-tight font-heading text-owl-dark">
+                {{ item.name }}
+              </h3>
+
+              <span class="text-xl font-bold leading-none text-owl-primary whitespace-nowrap">
+                ₺{{ item.price }}
+              </span>
+            </div>
+
+            <!-- Menu item ingredients -->
+            <div class="space-y-0.5 pt-1">
+              @for (ing of item.ingredients; track ing) {
+                <p class="text-xs text-owl-text">- {{ ing }}</p>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Pagination controls -->
+    @if (totalPages() > 1) {
+      <div class="flex justify-center gap-2 mt-10" owlAnimate="fadeInUp">
+
+        <!-- Previous page button -->
+        <button (click)="goToPage(currentPage() - 1)"
+                [disabled]="currentPage() === 1"
+                class="flex items-center justify-center w-10 h-10 transition-colors border border-gray-300 text-owl-text hover:border-owl-primary hover:text-owl-primary disabled:opacity-30 disabled:cursor-not-allowed">
+          <i class="text-xs pi pi-chevron-left"></i>
+        </button>
+
+        <!-- Page number buttons -->
+        @for (page of pageNumbers(); track page) {
+          <button (click)="goToPage(page)"
+                  [class]="'w-10 h-10 flex items-center justify-center border text-xs font-medium transition-colors ' +
+                    (currentPage() === page
+                      ? 'bg-owl-primary border-owl-primary text-white'
+                      : 'border-gray-300 text-owl-text hover:border-owl-primary hover:text-owl-primary')">
+            {{ page }}
+          </button>
+        }
+
+        <!-- Next page button -->
+        <button (click)="goToPage(currentPage() + 1)"
+                [disabled]="currentPage() === totalPages()"
+                class="flex items-center justify-center w-10 h-10 transition-colors border border-gray-300 text-owl-text hover:border-owl-primary hover:text-owl-primary disabled:opacity-30 disabled:cursor-not-allowed">
+          <i class="text-xs pi pi-chevron-right"></i>
+        </button>
+      </div>
+    }
+
+  </div>
+</section>
+} 

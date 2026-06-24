@@ -1,0 +1,8 @@
+.special-slide {
+    animation: specialFadeIn 0.35s ease;
+}
+
+@keyframes specialFadeIn {
+    from { opacity: 0; transform: translateX(12px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
