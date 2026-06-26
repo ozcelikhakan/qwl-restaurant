@@ -1,0 +1,134 @@
+@if (loading()) {
+  <div class="flex items-center justify-center py-20 text-owl-text">
+    <i class="pi pi-spin pi-spinner text-2xl mr-3 text-owl-primary"></i>
+    Loading...
+  </div>
+} @else {
+
+<!-- ══ TITLE ════════════════════════════════════════════════ -->
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-heading text-2xl text-owl-dark">Dashboard</h1>
+    <p class="text-sm text-owl-text mt-0.5">{{ today | date:'EEEE, d MMMM y':'':'en' }}</p>
+  </div>
+</div>
+
+<!-- ══ STATISTIC CARDS ═══════════════════════════════════ -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+  @for (stat of stats(); track stat.label) {
+    <a [routerLink]="stat.link"
+       class="group bg-white rounded shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+      <div class="w-12 h-12 rounded flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
+           [class]="stat.color">
+        <i [class]="'pi ' + stat.icon + ' text-white text-lg'"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-owl-dark leading-none mb-1">{{ stat.value }}</p>
+        <p class="text-xs text-owl-text">{{ stat.label }}</p>
+      </div>
+    </a>
+  }
+</div>
+
+<!-- ══ TABLE + MESSAGES ══════════════════════════════════════ -->
+<div class="grid grid-cols-1 xl:grid-cols-5 gap-6 mb-8">
+
+  <!-- Recent Reservations (3/5) -->
+  <div class="xl:col-span-3 bg-white rounded shadow-sm">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <h2 class="font-heading text-sm text-owl-dark uppercase tracking-wider">Recent Reservations</h2>
+      <a routerLink="/admin/reservations"
+         class="text-xs text-owl-primary hover:text-owl-dark transition-colors flex items-center gap-1">
+        View All <i class="pi pi-arrow-right text-xs"></i>
+      </a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-xs text-owl-text uppercase tracking-wider border-b border-gray-100">
+            <th class="px-6 py-3 text-left font-medium">Guest</th>
+            <th class="px-4 py-3 text-left font-medium">Date</th>
+            <th class="px-4 py-3 text-left font-medium">Time</th>
+            <th class="px-4 py-3 text-center font-medium">Guests</th>
+            <th class="px-4 py-3 text-left font-medium">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of recentReservations(); track r.id) {
+            <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-3 font-medium text-owl-dark">{{ r.name }}</td>
+              <td class="px-4 py-3 text-owl-text">{{ r.date | date:'d MMM':'':'en' }}</td>
+              <td class="px-4 py-3 text-owl-text">{{ r.time }}</td>
+              <td class="px-4 py-3 text-center text-owl-text">{{ r.guests }}</td>
+              <td class="px-4 py-3">
+                <span class="px-2.5 py-1 text-xs font-medium rounded-full" [class]="statusClass(r.status)">
+                  {{ statusLabel(r.status) }}
+                </span>
+              </td>
+            </tr>
+          }
+          @if (recentReservations().length === 0) {
+            <tr>
+              <td colspan="5" class="px-6 py-10 text-center text-owl-text text-xs">No reservations yet.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Messages (2/5) -->
+  <div class="xl:col-span-2 bg-white rounded shadow-sm">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <h2 class="font-heading text-sm text-owl-dark uppercase tracking-wider">Recent Messages</h2>
+      <a routerLink="/admin/messages"
+         class="text-xs text-owl-primary hover:text-owl-dark transition-colors flex items-center gap-1">
+        View All <i class="pi pi-arrow-right text-xs"></i>
+      </a>
+    </div>
+    <ul class="divide-y divide-gray-50">
+      @for (msg of recentMessages(); track msg.id) {
+        <li class="px-6 py-4 flex items-start gap-3 hover:bg-gray-50 transition-colors cursor-pointer">
+          <span class="mt-1.5 flex-shrink-0 w-2 h-2 rounded-full"
+                [class]="msg.read ? 'bg-transparent' : 'bg-owl-primary'">
+          </span>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-2 mb-0.5">
+              <p class="text-sm text-owl-dark truncate"
+                 [class]="msg.read ? 'font-normal' : 'font-semibold'">
+                {{ msg.name }}
+              </p>
+              <span class="text-xs text-gray-400 flex-shrink-0">{{ msg.date | date:'d MMM':'':'en' }}</span>
+            </div>
+            <p class="text-xs text-owl-text truncate">{{ msg.subject }}</p>
+          </div>
+        </li>
+      }
+      @if (recentMessages().length === 0) {
+        <li class="px-6 py-10 text-center text-owl-text text-xs">No messages yet.</li>
+      }
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══ QUICK ACCESS ══════════════════════════════════════════ -->
+<div class="bg-white rounded shadow-sm">
+  <div class="px-6 py-4 border-b border-gray-100">
+    <h2 class="font-heading text-sm text-owl-dark uppercase tracking-wider">Quick Access</h2>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-x divide-y divide-gray-100">
+    @for (link of quickLinks; track link.path) {
+      <a [routerLink]="link.path"
+         class="group flex flex-col items-center gap-2 p-6 hover:bg-owl-light transition-colors text-center">
+        <div class="w-10 h-10 bg-gray-100 group-hover:bg-owl-primary rounded flex items-center justify-center transition-colors duration-200">
+          <i [class]="'pi ' + link.icon + ' text-owl-text group-hover:text-white text-sm transition-colors duration-200'"></i>
+        </div>
+        <p class="text-xs font-medium text-owl-dark">{{ link.label }}</p>
+        <p class="text-xs text-gray-400 leading-snug">{{ link.desc }}</p>
+      </a>
+    }
+  </div>
+</div>
+
+}

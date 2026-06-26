@@ -85,33 +85,23 @@ export const routes: Routes = [
       /**
        * Admin dashboard route.
        */
-      /** 
+      
       {
         path: '',
         loadComponent: () => import('./admin/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
-      */
-      
-
-      /**
-       * Admin reservations management route.
-       */
+    
       /*
       {
         path: 'reservations',
         loadComponent: () => import('./admin/reservations/admin-reservations.component').then(m => m.AdminReservationsComponent)
       },
-      */
-
-      /**
-       * Admin events management route.
-       */
-      /*
+    
       {
         path: 'events',
         loadComponent: () => import('./admin/events/admin-events.component').then(m => m.AdminEventsComponent)
       },
-      */
+      
 
       /**
        * Admin menu management route.

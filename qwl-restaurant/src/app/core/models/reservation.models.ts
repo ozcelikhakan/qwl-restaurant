@@ -19,6 +19,7 @@ export interface ReservationDto {
     personCount: number;
     message: string | null;
     tableNumber: string | null;
+    status: ReservationStatus;
     createdAt: string;
 }
 
