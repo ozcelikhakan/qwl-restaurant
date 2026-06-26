@@ -1,0 +1,251 @@
+@if (loading()) {
+  <div class="flex items-center justify-center py-20 text-owl-text">
+    <i class="pi pi-spin pi-spinner text-2xl mr-3 text-owl-primary"></i>
+    Loading...
+  </div>
+} @else if (error()) {
+  <div class="bg-red-50 text-red-600 px-5 py-4 rounded flex items-center gap-2">
+    <i class="pi pi-exclamation-triangle"></i> {{ error() }}
+  </div>
+} @else {
+
+<!-- Title -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="font-heading text-2xl text-owl-dark">Events</h1>
+    <p class="text-sm text-owl-text mt-0.5">{{ counts().all }} events</p>
+  </div>
+  <button (click)="openAdd()"
+          class="flex items-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-5 py-3 hover:bg-owl-dark transition-colors">
+    <i class="pi pi-plus text-xs"></i>
+    New Event
+  </button>
+</div>
+
+<!-- Status filters -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  @for (opt of statusOptions; track opt.key) {
+    <button (click)="statusFilter.set(opt.key)"
+            class="bg-white rounded shadow-sm p-4 text-left transition-all duration-200 hover:shadow-md"
+            [class.ring-2]="statusFilter() === opt.key"
+            [class.ring-owl-primary]="statusFilter() === opt.key">
+      <p class="text-2xl font-bold text-owl-dark">
+        {{ opt.key === 'all' ? counts().all : counts()[opt.key] }}
+      </p>
+      <p class="text-xs text-owl-text mt-0.5">{{ opt.label }}</p>
+    </button>
+  }
+</div>
+
+<!-- Card list -->
+<div class="space-y-4">
+  @for (ev of filtered(); track ev.id) {
+    <div class="bg-white rounded shadow-sm flex overflow-hidden group">
+
+      <!-- Image -->
+      <div class="w-40 flex-shrink-0 overflow-hidden">
+        <img [src]="ev.img" [alt]="ev.title"
+             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+      </div>
+
+      <!-- Date badge -->
+      <div class="flex-shrink-0 flex flex-col items-center justify-center bg-owl-primary text-white px-4 text-center"
+           style="min-width:4.5rem">
+        <span class="text-2xl font-bold leading-none">{{ ev.day }}</span>
+        <span class="text-xs uppercase tracking-wider mt-0.5">{{ ev.month }}</span>
+        <span class="text-xs opacity-75">{{ ev.year }}</span>
+      </div>
+
+      <!-- Information -->
+      <div class="flex-1 p-5 flex items-center gap-4 min-w-0">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="px-2.5 py-0.5 text-xs font-medium rounded-full" [class]="statusClass(ev.status)">
+              {{ statusLabel(ev.status) }}
+            </span>
+          </div>
+          <h3 class="font-heading text-base text-owl-dark mb-1 truncate">{{ ev.title }}</h3>
+          <p class="text-xs text-owl-primary flex items-center gap-1 mb-3">
+            <i class="pi pi-map-marker"></i>{{ ev.venue || '—' }}
+          </p>
+
+          <!-- Ticket statistics -->
+          <div class="bg-owl-light rounded p-3 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-owl-text flex items-center gap-1">
+                <i class="pi pi-ticket text-owl-primary"></i> Sold Tickets
+              </span>
+              <span class="font-semibold text-owl-dark">
+                {{ ev.bookedSlots }} / {{ ev.totalSlots }}
+              </span>
+            </div>
+            <!-- Occupancy bar -->
+            <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+              <div class="h-1.5 rounded-full transition-all duration-500"
+                   [class]="ev.bookedSlots / ev.totalSlots >= 0.9 ? 'bg-red-500' : ev.bookedSlots / ev.totalSlots >= 0.6 ? 'bg-yellow-500' : 'bg-owl-primary'"
+                   [style.width]="(ev.totalSlots > 0 ? ev.bookedSlots / ev.totalSlots * 100 : 0) + '%'">
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-owl-text flex items-center gap-1">
+                <i class="pi pi-wallet text-owl-primary"></i> Total Revenue
+              </span>
+              <span class="font-semibold text-green-600">
+                ₺{{ ev.bookedSlots * ev.ticketPrice | number:'1.0-0' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-col gap-2 flex-shrink-0">
+          <button (click)="openEdit(ev)"
+                  class="border border-gray-300 text-owl-text text-xs px-4 py-2 hover:border-owl-primary hover:text-owl-primary transition-colors whitespace-nowrap">
+            <i class="pi pi-pencil mr-1.5"></i>Edit
+          </button>
+          <button (click)="delete(ev.id)"
+                  class="border border-red-200 text-red-400 text-xs px-4 py-2 hover:bg-red-50 transition-colors whitespace-nowrap">
+            <i class="pi pi-trash mr-1.5"></i>Delete
+          </button>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  @if (filtered().length === 0) {
+    <div class="bg-white rounded shadow-sm py-16 text-center text-owl-text">
+      <i class="pi pi-star block text-4xl text-gray-300 mb-3"></i>
+      <p class="text-sm">There are no events in this category.</p>
+    </div>
+  }
+</div>
+
+<!-- Modal -->
+@if (modalOpen()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+       style="background:rgba(0,0,0,0.5)">
+    <div class="bg-white w-full max-w-lg rounded shadow-xl max-h-[90vh] overflow-y-auto">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 class="font-heading text-base text-owl-dark">
+          {{ editingId() ? 'Edit Event' : 'Add New Event' }}
+        </h2>
+        <button (click)="modalOpen.set(false)" class="text-gray-400 hover:text-owl-dark transition-colors">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Event Name</label>
+          <input type="text" [ngModel]="form().title" (ngModelChange)="updateField('title', $event)"
+                 class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                 placeholder="Event name">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Venue</label>
+          <input type="text" [ngModel]="form().venue" (ngModelChange)="updateField('venue', $event)"
+                 class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                 placeholder="Hall name, QWL Restaurant">
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Day</label>
+            <input type="text" maxlength="2" [ngModel]="form().day" (ngModelChange)="updateField('day', $event)"
+                   class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="22">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Month</label>
+            <select [ngModel]="form().month" (ngModelChange)="updateField('month', $event)"
+                    class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none bg-white">
+              <option value="">Select</option>
+              @for (m of monthOptions; track m) {
+                <option [value]="m">{{ m }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Year</label>
+            <input type="text" maxlength="4" [ngModel]="form().year" (ngModelChange)="updateField('year', $event)"
+                   class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="2026">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Status</label>
+          <select [ngModel]="form().status" (ngModelChange)="updateField('status', $event)"
+                  class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none bg-white">
+            <option value="upcoming">Upcoming</option>
+            <option value="happening">Happening</option>
+            <option value="expired">Expired</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Description</label>
+          <textarea rows="3" [ngModel]="form().desc" (ngModelChange)="updateField('desc', $event)"
+                    class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none resize-none"
+                    placeholder="Event description..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Start Time</label>
+            <input type="text" [ngModel]="form().startTime" (ngModelChange)="updateField('startTime', $event)"
+                   class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="19:00">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">End Time</label>
+            <input type="text" [ngModel]="form().endTime" (ngModelChange)="updateField('endTime', $event)"
+                   class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="22:00">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Ticket Price (₺)</label>
+            <input type="number" [ngModel]="form().ticketPrice" (ngModelChange)="updateField('ticketPrice', +$event)"
+                   class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="0">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Total Capacity</label>
+            <input type="number" [ngModel]="form().totalSlots" (ngModelChange)="updateField('totalSlots', +$event)"
+                   class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="0">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Image URL</label>
+          <input type="text" [ngModel]="form().img" (ngModelChange)="updateField('img', $event)"
+                 class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                 placeholder="assets/images/event/...">
+        </div>
+
+      </div>
+
+      <div class="flex gap-3 px-6 py-4 border-t border-gray-100">
+        <button (click)="modalOpen.set(false)"
+                class="flex-1 border border-gray-300 text-owl-text text-xs font-medium uppercase tracking-widest py-3 hover:border-owl-primary hover:text-owl-primary transition-colors">
+          Cancel
+        </button>
+        <button (click)="save()"
+                class="flex-1 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest py-3 hover:bg-owl-dark transition-colors">
+          {{ editingId() ? 'Update' : 'Save' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+}

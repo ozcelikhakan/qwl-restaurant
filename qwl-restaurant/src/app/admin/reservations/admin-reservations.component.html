@@ -1,0 +1,267 @@
+@if (loading()) {
+  <div class="flex items-center justify-center py-20 text-owl-text">
+    <i class="pi pi-spin pi-spinner text-2xl mr-3 text-owl-primary"></i>
+    Loading...
+  </div>
+} @else if (error()) {
+  <div class="bg-red-50 text-red-600 px-5 py-4 rounded flex items-center gap-2 mb-6">
+    <i class="pi pi-exclamation-triangle"></i> {{ error() }}
+  </div>
+} @else {
+
+<!-- Title + View Selector -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="font-heading text-2xl text-owl-dark">Reservations</h1>
+    <p class="text-sm text-owl-text mt-0.5">{{ counts().all }} total records</p>
+  </div>
+  <div class="flex border border-gray-200 rounded overflow-hidden">
+    <button (click)="activeView.set('list')"
+            class="px-4 py-2 text-xs font-medium uppercase tracking-wider transition-colors flex items-center gap-1.5"
+            [class]="activeView() === 'list' ? 'bg-owl-primary text-white' : 'bg-white text-owl-text hover:bg-owl-light'">
+      <i class="pi pi-list text-xs"></i> List
+    </button>
+    <button (click)="activeView.set('plan')"
+            class="px-4 py-2 text-xs font-medium uppercase tracking-wider transition-colors flex items-center gap-1.5"
+            [class]="activeView() === 'plan' ? 'bg-owl-primary text-white' : 'bg-white text-owl-text hover:bg-owl-light'">
+      <i class="pi pi-map text-xs"></i> Plan
+    </button>
+  </div>
+</div>
+
+<!-- ══ PLAN VIEW ══════════════════════════════════════════ -->
+@if (activeView() === 'plan') {
+  <div class="bg-white rounded shadow-sm p-6">
+    <h2 class="font-heading text-base text-owl-dark mb-4">Restaurant Seating Plan</h2>
+
+    <!-- Date & Time selector -->
+    <div class="flex flex-wrap gap-3 mb-6 items-end">
+      <div>
+        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Date</label>
+        <input type="date" [ngModel]="planDate()" (ngModelChange)="planDate.set($event)"
+               class="border border-gray-200 px-3 py-2 text-sm focus:border-owl-primary focus:outline-none">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Time</label>
+        <select [ngModel]="planTime()" (ngModelChange)="planTime.set($event)"
+                class="border border-gray-200 px-3 py-2 text-sm focus:border-owl-primary focus:outline-none">
+          <option value="">Select</option>
+          @for (slot of ['12:00','13:00','14:00','18:00','19:00','20:00','21:00','22:00']; track slot) {
+            <option [value]="slot">{{ slot }}</option>
+          }
+        </select>
+      </div>
+      <button (click)="loadPlan()" [disabled]="!planDate() || !planTime() || planLoading()"
+              class="flex items-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-wider px-5 py-2.5 hover:bg-owl-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        @if (planLoading()) { <i class="pi pi-spin pi-spinner text-xs"></i> }
+        @else { <i class="pi pi-refresh text-xs"></i> }
+        Show
+      </button>
+    </div>
+
+    @if (planOccupied().length > 0 || planLoading()) {
+    <app-floor-plan
+        [occupiedLabels]="planOccupied()"
+        [selectedLabel]="null"
+        [requiredCapacity]="2"
+        [interactive]="false">
+    </app-floor-plan>
+    } @else if (planDate() && planTime()) {
+      <div class="text-center py-10 text-owl-text text-sm">
+        <i class="pi pi-check-circle text-3xl text-green-400 block mb-3"></i>
+        All tables are available at this date and time.
+      </div>
+    } @else {
+      <div class="text-center py-10 text-owl-text text-sm opacity-60">
+        <i class="pi pi-map text-3xl text-gray-300 block mb-3"></i>
+        Select a date and time to view the plan.
+      </div>
+    }
+  </div>
+}
+
+<!-- ══ LIST VIEW ══════════════════════════════════════════ -->
+@if (activeView() === 'list') {
+
+<!-- Summary counters -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  @for (tab of statusTabs; track tab.key) {
+    <button (click)="statusFilter.set(tab.key)"
+            class="bg-white rounded shadow-sm p-4 text-left transition-all duration-200 hover:shadow-md"
+            [class.ring-2]="statusFilter() === tab.key"
+            [class.ring-owl-primary]="statusFilter() === tab.key">
+      <p class="text-2xl font-bold text-owl-dark">
+        {{ tab.key === 'all' ? counts().all : counts()[tab.key] }}
+      </p>
+      <p class="text-xs text-owl-text mt-0.5">{{ tab.label }}</p>
+    </button>
+  }
+</div>
+
+<!-- Toolbar -->
+<div class="bg-white rounded shadow-sm p-4 mb-4 flex flex-wrap gap-3 items-center">
+  <div class="relative flex-1 min-w-48">
+    <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+    <input type="text" placeholder="Search by name or email..."
+           [ngModel]="search()" (ngModelChange)="search.set($event)"
+           class="w-full pl-8 pr-4 py-2 text-sm border border-gray-200 focus:border-owl-primary focus:outline-none">
+  </div>
+  <input type="date" [ngModel]="dateFilter()" (ngModelChange)="dateFilter.set($event)"
+         class="border border-gray-200 px-3 py-2 text-sm focus:border-owl-primary focus:outline-none">
+  @if (dateFilter()) {
+    <button (click)="dateFilter.set('')" class="text-xs text-owl-text hover:text-owl-primary transition-colors">
+      <i class="pi pi-times mr-1"></i>Clear Date
+    </button>
+  }
+</div>
+
+<!-- Table + Detail panel -->
+<div class="flex gap-4" [class.items-start]="selected()">
+
+  <!-- Table -->
+  <div class="flex-1 bg-white rounded shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-xs text-owl-text uppercase tracking-wider border-b border-gray-100 bg-gray-50">
+            <th class="px-5 py-3 text-left font-medium">Guest</th>
+            <th class="px-4 py-3 text-left font-medium">Date / Time</th>
+            <th class="px-4 py-3 text-center font-medium">Guests</th>
+            <th class="px-4 py-3 text-left font-medium">Table</th>
+            <th class="px-4 py-3 text-left font-medium">Status</th>
+            <th class="px-4 py-3 text-right font-medium">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of filtered(); track r.id) {
+            <tr class="border-b border-gray-50 transition-colors cursor-pointer"
+                [class.bg-owl-light]="selected()?.id === r.id"
+                [class.hover:bg-gray-50]="selected()?.id !== r.id"
+                (click)="selected.set(selected()?.id === r.id ? null : r)">
+              <td class="px-5 py-3">
+                <p class="font-medium text-owl-dark">{{ r.name }}</p>
+                <p class="text-xs text-gray-400">{{ r.email }}</p>
+              </td>
+              <td class="px-4 py-3 text-owl-text">
+                {{ r.date | date:'d MMM':'':'en' }} · {{ r.time }}
+              </td>
+              <td class="px-4 py-3 text-center text-owl-text">{{ r.guests }}</td>
+              <td class="px-4 py-3 text-owl-text">{{ r.table }}</td>
+              <td class="px-4 py-3">
+                <span class="px-2.5 py-1 text-xs font-medium rounded-full" [class]="statusClass(r.status)">
+                  {{ statusLabel(r.status) }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-right" (click)="$event.stopPropagation()">
+                <div class="flex items-center justify-end gap-1">
+                  @if (r.status !== 'confirmed') {
+                    <button (click)="setStatus(r.id, 'confirmed')"
+                            class="p-1.5 text-green-600 hover:bg-green-50 rounded transition-colors" title="Confirm">
+                      <i class="pi pi-check text-xs"></i>
+                    </button>
+                  }
+                  @if (r.status !== 'cancelled') {
+                    <button (click)="setStatus(r.id, 'cancelled')"
+                            class="p-1.5 text-amber-500 hover:bg-amber-50 rounded transition-colors" title="Cancel">
+                      <i class="pi pi-ban text-xs"></i>
+                    </button>
+                  }
+                  <button (click)="delete(r.id)"
+                          class="p-1.5 text-red-400 hover:bg-red-50 rounded transition-colors" title="Delete">
+                    <i class="pi pi-trash text-xs"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+          @if (filtered().length === 0) {
+            <tr>
+              <td colspan="6" class="px-5 py-12 text-center text-owl-text">
+                <i class="pi pi-calendar block text-3xl text-gray-300 mb-3"></i>
+                No records found.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Detail panel -->
+  @if (selected(); as r) {
+    <div class="w-72 flex-shrink-0 bg-white rounded shadow-sm p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-heading text-sm text-owl-dark uppercase tracking-wider">Detail</h3>
+        <button (click)="selected.set(null)" class="text-gray-400 hover:text-owl-dark transition-colors">
+          <i class="pi pi-times text-xs"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-owl-text">Full Name</span>
+          <span class="font-medium text-owl-dark">{{ r.name }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-owl-text">Email</span>
+          <span class="text-owl-dark text-xs">{{ r.email }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-owl-text">Phone</span>
+          <span class="text-owl-dark">{{ r.phone }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-owl-text">Date</span>
+          <span class="text-owl-dark">{{ r.date | date:'d MMMM y':'':'en' }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-owl-text">Time</span>
+          <span class="text-owl-dark">{{ r.time }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-owl-text">Guests</span>
+          <span class="text-owl-dark">{{ r.guests }} guest(s)</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-owl-text">Table</span>
+          <span class="text-owl-dark">{{ r.table }}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-owl-text">Status</span>
+          <span class="px-2.5 py-1 text-xs font-medium rounded-full" [class]="statusClass(r.status)">
+            {{ statusLabel(r.status) }}
+          </span>
+        </div>
+      </div>
+
+      @if (r.message) {
+        <div class="border-t border-gray-100 pt-3">
+          <p class="text-xs text-owl-text mb-1">Special Request</p>
+          <p class="text-sm text-owl-dark bg-owl-light p-3 leading-relaxed">{{ r.message }}</p>
+        </div>
+      }
+
+      <div class="border-t border-gray-100 pt-3 flex flex-col gap-2">
+        @if (r.status !== 'confirmed') {
+          <button (click)="setStatus(r.id, 'confirmed')"
+                  class="w-full bg-green-600 text-white text-xs font-medium uppercase tracking-wider py-2.5 hover:bg-green-700 transition-colors">
+            <i class="pi pi-check mr-1.5"></i>Confirm
+          </button>
+        }
+        @if (r.status !== 'cancelled') {
+          <button (click)="setStatus(r.id, 'cancelled')"
+                  class="w-full border border-amber-400 text-amber-600 text-xs font-medium uppercase tracking-wider py-2.5 hover:bg-amber-50 transition-colors">
+            <i class="pi pi-ban mr-1.5"></i>Cancel
+          </button>
+        }
+        <button (click)="delete(r.id)"
+                class="w-full border border-red-300 text-red-400 text-xs font-medium uppercase tracking-wider py-2.5 hover:bg-red-50 transition-colors">
+          <i class="pi pi-trash mr-1.5"></i>Delete Record
+        </button>
+      </div>
+    </div>
+  }
+</div>
+} <!-- /activeView list -->
+
+} <!-- /loading else -->

@@ -2,7 +2,7 @@ import { Component, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageBannerComponent, BreadcrumbItem } from '../../shared/components/page-banner/page-banner.component';
 import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.directive';
-import { FloorPlanComponent, FloorTable, FLOOR_TABLES } from '../../shared/components/floor-modal/floor-modal.component';
+import { FloorPlanComponent, FloorTable, FLOOR_TABLES } from '../../shared/components/floor-plan/floor-plan.component';
 import { ReservationService } from '../../core/services/reservation.service';
 
 /**

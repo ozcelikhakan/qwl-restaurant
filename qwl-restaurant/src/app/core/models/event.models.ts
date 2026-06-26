@@ -2,7 +2,7 @@ export interface EventDto {
     id: number;
     title: string;
     description: string;
-    imageUrl: string;
+    imageUrl: string | null;
     eventDate: string;
     startTime: string;
     endTime: string;
@@ -18,7 +18,7 @@ export interface EventDto {
 export interface CreateEventDto {
     title: string;
     description: string;
-    imageUrl: string;
+    imageUrl: string | null;
     eventDate: string;
     startTime: string;
     endTime: string;
