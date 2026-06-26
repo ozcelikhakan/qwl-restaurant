@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "CZIbHVW6Vas=",
+  "dgSpecHash": "rbC3avHdL6Q=",
   "success": true,
   "projectFilePath": "/Users/hakanozcelik/Desktop/qwl-restaurant/backend/qwl-restaurant.API/qwl-restaurant.API.csproj",
   "expectedPackageFiles": [
@@ -31,10 +31,11 @@
     "/Users/hakanozcelik/.nuget/packages/microsoft.identitymodel.tokens/8.0.0/microsoft.identitymodel.tokens.8.0.0.nupkg.sha512",
     "/Users/hakanozcelik/.nuget/packages/microsoft.openapi/1.6.14/microsoft.openapi.1.6.14.nupkg.sha512",
     "/Users/hakanozcelik/.nuget/packages/mono.texttemplating/2.2.1/mono.texttemplating.2.2.1.nupkg.sha512",
-    "/Users/hakanozcelik/.nuget/packages/sqlitepclraw.bundle_e_sqlite3/2.1.6/sqlitepclraw.bundle_e_sqlite3.2.1.6.nupkg.sha512",
-    "/Users/hakanozcelik/.nuget/packages/sqlitepclraw.core/2.1.6/sqlitepclraw.core.2.1.6.nupkg.sha512",
-    "/Users/hakanozcelik/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.1.6/sqlitepclraw.lib.e_sqlite3.2.1.6.nupkg.sha512",
-    "/Users/hakanozcelik/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.1.6/sqlitepclraw.provider.e_sqlite3.2.1.6.nupkg.sha512",
+    "/Users/hakanozcelik/.nuget/packages/sourcegear.sqlite3/3.50.4.5/sourcegear.sqlite3.3.50.4.5.nupkg.sha512",
+    "/Users/hakanozcelik/.nuget/packages/sqlitepclraw.bundle_e_sqlite3/3.0.3/sqlitepclraw.bundle_e_sqlite3.3.0.3.nupkg.sha512",
+    "/Users/hakanozcelik/.nuget/packages/sqlitepclraw.config.e_sqlite3/3.0.3/sqlitepclraw.config.e_sqlite3.3.0.3.nupkg.sha512",
+    "/Users/hakanozcelik/.nuget/packages/sqlitepclraw.core/3.0.3/sqlitepclraw.core.3.0.3.nupkg.sha512",
+    "/Users/hakanozcelik/.nuget/packages/sqlitepclraw.provider.e_sqlite3/3.0.3/sqlitepclraw.provider.e_sqlite3.3.0.3.nupkg.sha512",
     "/Users/hakanozcelik/.nuget/packages/swashbuckle.aspnetcore/6.6.2/swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
     "/Users/hakanozcelik/.nuget/packages/swashbuckle.aspnetcore.swagger/6.6.2/swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",
     "/Users/hakanozcelik/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.6.2/swashbuckle.aspnetcore.swaggergen.6.6.2.nupkg.sha512",
