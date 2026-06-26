@@ -1,0 +1,203 @@
+<!-- Title -->
+<div class="mb-8">
+  <h1 class="font-heading text-2xl text-owl-dark">Profile Settings</h1>
+  <p class="text-sm text-owl-text mt-0.5">Manage your personal information</p>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+  <!-- Left: Profile card -->
+  <div class="xl:col-span-1">
+    <div class="bg-white rounded shadow-sm p-6 flex flex-col items-center text-center">
+      <!-- Avatar -->
+      @if (info.avatarUrl) {
+        <img [src]="info.avatarUrl" alt="Avatar"
+             class="w-20 h-20 rounded-full object-cover mb-4 border-2 border-owl-primary">
+      } @else {
+        <div class="w-20 h-20 rounded-full bg-owl-primary flex items-center justify-center mb-4">
+          <i class="pi pi-user text-white text-3xl"></i>
+        </div>
+      }
+      <h2 class="font-heading text-lg text-owl-dark mb-0.5">
+        {{ info.firstName }} {{ info.lastName }}
+      </h2>
+      <p class="text-xs text-owl-text mb-1">{{ info.email }}</p>
+      <span class="inline-block mt-2 px-3 py-1 text-xs bg-owl-primary text-white uppercase tracking-wider">
+        Admin
+      </span>
+
+      <div class="w-full mt-6 pt-6 border-t border-gray-100 space-y-2 text-left">
+        <div class="flex items-center gap-3 text-sm text-owl-text">
+          <i class="pi pi-envelope text-owl-primary text-xs w-4"></i>
+          {{ info.email }}
+        </div>
+        @if (info.phone) {
+          <div class="flex items-center gap-3 text-sm text-owl-text">
+            <i class="pi pi-phone text-owl-primary text-xs w-4"></i>
+            {{ info.phone }}
+          </div>
+        }
+        <div class="flex items-center gap-3 text-sm text-owl-text">
+          <i class="pi pi-shield text-owl-primary text-xs w-4"></i>
+          Administrator privileges
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Forms -->
+  <div class="xl:col-span-2 space-y-6">
+
+    <!-- Personal Information -->
+    <div class="bg-white rounded shadow-sm">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="font-heading text-sm text-owl-dark uppercase tracking-wider">Personal Information</h3>
+      </div>
+      <div class="p-6 space-y-4">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">First Name</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-owl-primary">
+                <i class="pi pi-user text-xs"></i>
+              </span>
+              <input type="text" [(ngModel)]="info.firstName" name="firstName"
+                     class="w-full border border-gray-200 pl-9 pr-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Last Name</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-owl-primary">
+                <i class="pi pi-user text-xs"></i>
+              </span>
+              <input type="text" [(ngModel)]="info.lastName" name="lastName"
+                     class="w-full border border-gray-200 pl-9 pr-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-owl-primary">
+              <i class="pi pi-envelope text-xs"></i>
+            </span>
+            <input type="email" [(ngModel)]="info.email" name="email"
+                   class="w-full border border-gray-200 pl-9 pr-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Phone</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-owl-primary">
+              <i class="pi pi-phone text-xs"></i>
+            </span>
+            <input type="tel" [(ngModel)]="info.phone" name="phone"
+                   class="w-full border border-gray-200 pl-9 pr-4 py-2.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"
+                   placeholder="Phone number">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Profile Image URL</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-owl-primary">
+              <i class="pi pi-image text-xs"></i>
+            </span>
+            <input type="url" [(ngModel)]="info.avatarUrl" name="avatarUrl"
+                   class="w-full border border-gray-200 pl-9 pr-4 py-2.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"
+                   placeholder="https://example.com/avatar.jpg">
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <button (click)="saveInfo()"
+                  class="bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-8 py-3 hover:bg-owl-dark transition-colors">
+            Save
+          </button>
+          @if (infoSaved()) {
+            <span class="flex items-center gap-1.5 text-xs text-green-600">
+              <i class="pi pi-check-circle"></i> Information updated
+            </span>
+          }
+          @if (infoError()) {
+            <span class="flex items-center gap-1.5 text-xs text-red-500">
+              <i class="pi pi-times-circle"></i> {{ infoError() }}
+            </span>
+          }
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Change Password -->
+    <div class="bg-white rounded shadow-sm">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="font-heading text-sm text-owl-dark uppercase tracking-wider">Change Password</h3>
+      </div>
+      <div class="p-6 space-y-4">
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Current Password</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-owl-primary">
+              <i class="pi pi-lock text-xs"></i>
+            </span>
+            <input type="password" [(ngModel)]="passwords.current" name="currentPwd"
+                   class="w-full border border-gray-200 pl-9 pr-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors"
+                   placeholder="••••••••">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">New Password</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-owl-primary">
+                <i class="pi pi-lock text-xs"></i>
+              </span>
+              <input type="password" [(ngModel)]="passwords.next" name="newPwd"
+                     class="w-full border border-gray-200 pl-9 pr-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors"
+                     placeholder="Min. 6 characters">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Confirm Password</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-owl-primary">
+                <i class="pi pi-lock text-xs"></i>
+              </span>
+              <input type="password" [(ngModel)]="passwords.confirm" name="confirmPwd"
+                     class="w-full border border-gray-200 pl-9 pr-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors"
+                     placeholder="••••••••">
+            </div>
+          </div>
+        </div>
+
+        @if (passwordError()) {
+          <div class="flex items-center gap-2 text-xs text-red-500 bg-red-50 px-4 py-2.5">
+            <i class="pi pi-exclamation-triangle flex-shrink-0"></i>
+            {{ passwordError() }}
+          </div>
+        }
+
+        <div class="flex items-center gap-3 pt-2">
+          <button (click)="savePassword()"
+                  class="bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-8 py-3 hover:bg-owl-dark transition-colors">
+            Update Password
+          </button>
+          @if (passwordSaved()) {
+            <span class="flex items-center gap-1.5 text-xs text-green-600">
+              <i class="pi pi-check-circle"></i> Password updated
+            </span>
+          }
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,128 @@
+@if (loading()) {
+  <div class="flex items-center justify-center py-20 text-owl-text">
+    <i class="pi pi-spin pi-spinner text-2xl mr-3 text-owl-primary"></i>
+    Loading...
+  </div>
+} @else if (error()) {
+  <div class="bg-red-50 text-red-600 px-5 py-4 rounded flex items-center gap-2 mb-6">
+    <i class="pi pi-exclamation-triangle"></i> {{ error() }}
+  </div>
+} 
+
+<!-- Title -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="font-heading text-2xl text-owl-dark">Messages</h1>
+    <p class="text-sm text-owl-text mt-0.5">
+      @if (unreadCount() > 0) { {{ unreadCount() }} unread message(s) }
+      @else { All messages have been read }
+    </p>
+  </div>
+</div>
+
+<!-- Two panels -->
+<div class="flex gap-4 h-[calc(100vh-12rem)]">
+
+  <!-- Left list -->
+  <div class="w-80 flex-shrink-0 bg-white rounded shadow-sm flex flex-col">
+
+    <!-- Search + filter -->
+    <div class="p-3 border-b border-gray-100 space-y-2">
+      <div class="relative">
+        <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+        <input type="text" placeholder="Search..."
+               [ngModel]="search()" (ngModelChange)="search.set($event)"
+               class="w-full pl-8 pr-4 py-2 text-sm border border-gray-200 focus:border-owl-primary focus:outline-none">
+      </div>
+      <button (click)="onlyUnread.set(!onlyUnread())"
+              class="flex items-center gap-2 text-xs transition-colors"
+              [class]="onlyUnread() ? 'text-owl-primary font-medium' : 'text-owl-text'">
+        <span class="w-4 h-4 border-2 flex items-center justify-center transition-colors"
+              [class]="onlyUnread() ? 'border-owl-primary bg-owl-primary' : 'border-gray-300'">
+          @if (onlyUnread()) { <i class="pi pi-check text-white" style="font-size:9px"></i> }
+        </span>
+        Only unread
+      </button>
+    </div>
+
+    <!-- List -->
+    <div class="flex-1 overflow-y-auto divide-y divide-gray-50">
+      @for (msg of filtered(); track msg.id) {
+        <div (click)="select(msg)"
+             class="flex gap-3 px-4 py-3.5 cursor-pointer transition-colors"
+             [class]="selected()?.id === msg.id ? 'bg-owl-light' : 'hover:bg-gray-50'">
+          <span class="mt-1.5 w-2 h-2 rounded-full flex-shrink-0"
+                [class]="msg.read ? 'bg-transparent' : 'bg-owl-primary'"></span>
+          <div class="min-w-0 flex-1">
+            <div class="flex justify-between gap-1 mb-0.5">
+              <p class="text-sm truncate" [class]="msg.read ? 'text-owl-dark' : 'text-owl-dark font-semibold'">
+                {{ msg.name }}
+              </p>
+              <span class="text-xs text-gray-400 flex-shrink-0">{{ msg.date | date:'d MMM':'':'en' }}</span>
+            </div>
+            <p class="text-xs text-owl-text truncate">{{ msg.subject }}</p>
+          </div>
+        </div>
+      }
+      @if (filtered().length === 0) {
+        <div class="py-12 text-center text-owl-text text-sm">
+          <i class="pi pi-inbox block text-3xl text-gray-300 mb-3"></i>
+          No messages found
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Right detail -->
+  <div class="flex-1 bg-white rounded shadow-sm flex flex-col">
+    @if (selected(); as msg) {
+
+      <!-- Title -->
+      <div class="px-6 py-4 border-b border-gray-100 flex items-start justify-between gap-4">
+        <div>
+          <h2 class="font-heading text-base text-owl-dark mb-1">{{ msg.subject }}</h2>
+          <p class="text-xs text-owl-text">
+            <strong class="text-owl-dark">{{ msg.name }}</strong>
+            &lt;{{ msg.email }}&gt; · {{ msg.date | date:'d MMMM y':'':'en' }}
+          </p>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          @if (!msg.read) {
+            <button (click)="markRead(msg.id)"
+                    class="text-xs border border-gray-300 px-3 py-1.5 text-owl-text hover:border-owl-primary hover:text-owl-primary transition-colors">
+              <i class="pi pi-envelope-open mr-1"></i>Mark as Read
+            </button>
+          }
+          <button (click)="delete(msg.id)"
+                  class="text-xs border border-red-200 px-3 py-1.5 text-red-400 hover:bg-red-50 transition-colors">
+            <i class="pi pi-trash mr-1"></i>Delete
+          </button>
+        </div>
+      </div>
+
+      <!-- Message content -->
+      <div class="flex-1 p-6 overflow-y-auto">
+        <div class="max-w-2xl">
+          <p class="text-sm text-owl-dark leading-relaxed">{{ msg.body }}</p>
+        </div>
+      </div>
+
+      <!-- Quick reply -->
+      <div class="px-6 py-4 border-t border-gray-100">
+        <a [href]="'mailto:' + msg.email + '?subject=Re: ' + msg.subject"
+           class="inline-flex items-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-6 py-2.5 hover:bg-owl-dark transition-colors">
+          <i class="pi pi-reply text-xs"></i>
+          Reply by Email
+        </a>
+      </div>
+
+    } @else {
+      <div class="flex-1 flex flex-col items-center justify-center text-owl-text">
+        <i class="pi pi-envelope text-5xl text-gray-200 mb-4"></i>
+        <p class="text-sm">Select a message from the left list to view it</p>
+      </div>
+    }
+  </div>
+
+</div>
+

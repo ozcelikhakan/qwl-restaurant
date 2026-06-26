@@ -73,10 +73,6 @@ export const routes: Routes = [
   },
   
 
-  /**
-   * Protected admin route group.
-   * Only admin users can access this section.
-   
   {
     path: 'admin',
     canActivate: [adminGuard],
@@ -91,7 +87,7 @@ export const routes: Routes = [
         loadComponent: () => import('./admin/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
     
-      /*
+      
       {
         path: 'reservations',
         loadComponent: () => import('./admin/reservations/admin-reservations.component').then(m => m.AdminReservationsComponent)
@@ -103,53 +99,34 @@ export const routes: Routes = [
       },
       
 
-      /**
-       * Admin menu management route.
-       */
-      /*
       {
         path: 'menu',
         loadComponent: () => import('./admin/menu/admin-menu.component').then(m => m.AdminMenuComponent)
       },
-      */
+      
 
-      /**
-       * Admin blogs management route.
-       */
-      /*
+      
+      
       {
         path: 'blogs',
         loadComponent: () => import('./admin/blogs/admin-blogs.component').then(m => m.AdminBlogsComponent)
       },
-      */
+      
 
-      /**
-       * Admin contact messages management route.
-       */
-      /*
+     
       {
         path: 'messages',
         loadComponent: () => import('./admin/messages/admin-messages.component').then(m => m.AdminMessagesComponent)
       },
-      */
+      
 
-      /**
-       * Admin profile page route.
-       */
-      /*
       {
         path: 'profile',
         loadComponent: () => import('./admin/profile/admin-profile.component').then(m => m.AdminProfileComponent)
       }
-        *
     ]
   },
 
-  /**
-   * Wildcard route.
-   * Displays the not-found page for unknown routes.
-   */
-  
   {
     path: '**',
     loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent)
