@@ -1,59 +1,121 @@
-# QwlRestaurant
+# QWL Restaurant
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.26.
+A full-stack restaurant application featuring a public-facing website for visitors and a
+separate management panel for administrators. The frontend is built with Angular and the
+backend with a .NET Web API.
 
-## Development server
+## Contents
 
-To start a local development server, run:
+- [Architecture](#architecture)
+- [Tech stack](#tech-stack)
+- [Project structure](#project-structure)
+- [Getting started](#getting-started)
+- [Features](#features)
+- [Testing](#testing)
+
+## Architecture
+
+The project consists of two main parts:
+
+- **`qwl-restaurant/`** – An Angular 19 single-page application (SPA). Pages are loaded as
+  lazy-loaded standalone components. Authorization is handled through route guards and an
+  HTTP interceptor that attaches the auth token to outgoing requests.
+- **`backend/`** – A .NET Web API built with a layered architecture, split into four
+  projects: API, Business, DataAccess and Entities. Authentication is done with JWT, and
+  EF Core over SQLite is used for data storage.
+
+## Tech stack
+
+**Frontend**
+
+- Angular 19 (standalone components, lazy loading)
+- PrimeNG and PrimeIcons (UI components)
+- Tailwind CSS (styling)
+- Swiper (gallery / slider)
+- RxJS
+
+**Backend**
+
+- .NET Web API (layered architecture)
+- Entity Framework Core + SQLite
+- ASP.NET Core Identity + JWT
+- Swagger (API documentation)
+
+## Project structure
+
+```
+qwl-restaurant/
+├── backend/                     # .NET Web API
+│   ├── qwl-restaurant.API/         # Controllers, Program.cs, configuration
+│   ├── qwl-restaurant.Business/    # Business rules, services
+│   ├── qwl-restaurant.DataAccess/  # DbContext, repositories
+│   └── qwl-restaurant.Entities/    # Data models
+│
+└── qwl-restaurant/              # Angular application
+    └── src/app/
+        ├── core/      # services, guards, interceptors, models
+        ├── features/  # visitor pages (home, menu, events, blog, reservation...)
+        ├── admin/     # management panel (dashboard, messages, reservations, menu...)
+        └── shared/    # shared components and directives
+```
+
+## Getting started
+
+### Backend
 
 ```bash
+cd backend/qwl-restaurant.API
+dotnet restore
+dotnet run
+```
+
+On startup the database migrations are applied automatically, and the initial roles and an
+admin user are seeded. In the development environment the Swagger UI is available at
+`/swagger`.
+
+### Frontend
+
+```bash
+cd qwl-restaurant
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Then open `http://localhost:4200/` in your browser. The app reloads automatically whenever
+you change any of the source files.
 
-## Code scaffolding
+> Note: the API URL is managed through the environment files under `src/environments`. If
+> you run the backend on a different port, just update it there.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Features
 
-```bash
-ng generate component component-name
-```
+**Visitor side**
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- Home, about, menu, events and blog pages
+- Event and blog detail pages
+- Reservation booking and contact form
+- Member login, profile and "my tickets" pages
 
-```bash
-ng generate --help
-```
+**Management panel**
 
-## Building
+- Token-based login and authorization (admin guard)
+- Dashboard
+- Menu, event, blog and reservation management
+- Viewing messages submitted through the contact form
+- Administrator profile
 
-To build the project run:
+## Testing
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Unit tests run with Karma + Jasmine:
 
 ```bash
+cd qwl-restaurant
 ng test
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+End-to-end tests use Playwright:
 
 ```bash
-ng e2e
+npm run e2e        # headless run
+npm run e2e:ui     # run with the UI
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
