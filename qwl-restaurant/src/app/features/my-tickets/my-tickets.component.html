@@ -1,0 +1,88 @@
+
+<app-page-banner
+  title="My Tickets"
+  bgImage="assets/images/event/event_details_page_barner_bg.jpg"
+  [breadcrumbs]="breadcrumbs">
+</app-page-banner>
+
+<section class="section-pad bg-white">
+  <div class="container mx-auto px-6 max-w-4xl">
+
+    @if (loading()) {
+      <div class="py-20 text-center text-owl-text">
+        <i class="pi pi-spin pi-spinner text-4xl text-owl-primary block mb-3"></i>
+        <p class="text-sm">Loading...</p>
+      </div>
+    } @else if (error()) {
+      <div class="py-20 text-center text-red-500">
+        <i class="pi pi-exclamation-triangle text-4xl block mb-3"></i>
+        <p class="text-sm">{{ error() }}</p>
+      </div>
+    } @else if (tickets().length === 0) {
+      <div class="text-center py-20">
+        <i class="pi pi-ticket text-5xl text-gray-300 mb-4 block"></i>
+        <h3 class="font-heading text-xl text-owl-dark mb-2">You do not have any tickets yet</h3>
+        <p class="text-sm text-owl-text mb-6">You can start by purchasing a ticket from the events page.</p>
+        <a routerLink="/events"
+           class="inline-block bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-8 py-3 hover:bg-owl-dark transition-colors">
+          Browse Events
+        </a>
+      </div>
+    } @else {
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="font-heading text-xl text-owl-dark">My Tickets</h2>
+        <span class="text-sm text-owl-text">{{ tickets().length }} ticket(s)</span>
+      </div>
+
+      <div class="space-y-4">
+        @for (ticket of tickets(); track ticket.id) {
+          <div class="bg-white border border-gray-100 shadow-sm rounded overflow-hidden flex flex-col sm:flex-row">
+
+            <!-- Left color stripe -->
+            <div class="sm:w-2 flex-shrink-0"
+                 [class]="ticket.status === 'Confirmed' ? 'bg-green-400' : ticket.status === 'Cancelled' ? 'bg-red-400' : 'bg-owl-primary'">
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+
+              <!-- Event information -->
+              <div class="flex-1 min-w-0">
+                <h3 class="font-heading text-base text-owl-dark mb-1 truncate">{{ ticket.eventTitle }}</h3>
+                <div class="flex flex-wrap gap-3 text-xs text-owl-text mt-1">
+                  <span class="flex items-center gap-1">
+                    <i class="pi pi-calendar text-owl-primary"></i>
+                    {{ formatDate(ticket.eventDate) }}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <i class="pi pi-ticket text-owl-primary"></i>
+                    {{ ticket.quantity }} ticket(s)
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <i class="pi pi-clock text-owl-primary"></i>
+                    {{ formatDate(ticket.purchasedAt) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Right: price + status -->
+              <div class="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-1 flex-shrink-0">
+                <span class="text-xl font-bold text-owl-primary">{{ ticket.totalPrice }} ₺</span>
+                <span class="text-xs px-2.5 py-1 rounded-full font-medium"
+                      [class]="ticket.status === 'Confirmed' ? 'bg-green-100 text-green-700'
+                              : ticket.status === 'Cancelled' ? 'bg-red-100 text-red-600'
+                              : 'bg-amber-100 text-amber-700'">
+                  {{ ticket.status === 'Confirmed' ? 'Confirmed'
+                   : ticket.status === 'Cancelled' ? 'Cancelled'
+                   : 'Pending' }}
+                </span>
+              </div>
+
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</section>

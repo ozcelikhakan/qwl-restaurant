@@ -6,9 +6,7 @@ import { adminGuard, authGuard } from './core/guards/auth.guard';
  * Uses lazy-loaded standalone components with loadComponent.
  */
 export const routes: Routes = [
-  /**
-   * Public home page route.
-   */
+
   {
     path: '',
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
@@ -56,36 +54,24 @@ export const routes: Routes = [
   },
 
 
-  /**
-   * User profile page route.
    
   {
     path: 'profile',
     loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
   },
-  */
-
-  /**
-   * Protected user tickets page route.
-   * Only authenticated users can access this route.
-   
+  
   {
     path: 'my-tickets',
     canActivate: [authGuard],
     loadComponent: () => import('./features/my-tickets/my-tickets.component').then(m => m.MyTicketsComponent)
   },
-  */
-
-  /**
-   * Protected user blogs page route.
-   * Only authenticated users can access this route.
-   
+  
   {
     path: 'my-blogs',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/blog/my-blogs/my-blogs.component').then(m => m.MyBlogsComponent)
+    loadComponent: () => import('./features/blog/my-blog/my-blog.component').then(m => m.MyBlogsComponent)
   },
-  */
+  
 
   /**
    * Protected admin route group.
@@ -173,10 +159,10 @@ export const routes: Routes = [
    * Wildcard route.
    * Displays the not-found page for unknown routes.
    */
-  /*
+  
   {
     path: '**',
     loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent)
   }
-    */
+    
 ];
