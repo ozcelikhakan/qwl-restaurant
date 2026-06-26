@@ -27,7 +27,7 @@ interface DisplayPost {
 @Component({
   selector: 'app-blog-detail',
   standalone: true,
-  imports: [DatePipe, FormsModule, RouterLink, PageBannerComponent, ScrollAnimateDirective],
+  imports: [DatePipe, FormsModule,  PageBannerComponent, ScrollAnimateDirective],
   templateUrl: './blog-detail.component.html',
   styleUrl: './blog-detail.component.scss'
 })

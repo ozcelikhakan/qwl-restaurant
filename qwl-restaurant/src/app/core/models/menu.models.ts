@@ -22,7 +22,7 @@ export interface CreateMenuItemDto {
     description: string | null;
     ingredients: string | null;
     price: number;
-    imageUrl: string;
+    imageUrl: string | null;
     displayOrder: number;
     menuCategoryId: number;
 }
@@ -32,6 +32,6 @@ export interface DailySpecial {
     title: string;
     description: string;
     price: number;
-    imageUrl: string;
+    imageUrl: string | null;
     displayOrder: number;
 }

@@ -1,0 +1,335 @@
+@if (loading()) {
+  <div class="flex items-center justify-center py-20 text-owl-text">
+    <i class="pi pi-spin pi-spinner text-2xl mr-3 text-owl-primary"></i>
+    Loading...
+  </div>
+} @else if (error()) {
+  <div class="bg-red-50 text-red-600 px-5 py-4 rounded flex items-center gap-2">
+    <i class="pi pi-exclamation-triangle"></i> {{ error() }}
+  </div>
+} 
+
+<!-- Title -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="font-heading text-2xl text-owl-dark">Menu Management</h1>
+    <p class="text-sm text-owl-text mt-0.5">
+      @if (mainTab() === 'items') { {{ filtered().length }} item(s) }
+      @else { {{ specials().length }} special(s) }
+    </p>
+  </div>
+  @if (mainTab() === 'items') {
+    <button (click)="openAdd()"
+            class="flex items-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-5 py-3 hover:bg-owl-dark transition-colors">
+      <i class="pi pi-plus text-xs"></i> Add New Item
+    </button>
+  } @else {
+    <button (click)="openAddSpecial()"
+            class="flex items-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-5 py-3 hover:bg-owl-dark transition-colors">
+      <i class="pi pi-plus text-xs"></i> Add New Special
+    </button>
+  }
+</div>
+
+<!-- Main Tab Switch -->
+<div class="flex gap-1 mb-6 bg-gray-100 rounded p-1 w-fit">
+  <button (click)="mainTab.set('items')"
+          class="px-5 py-2 text-xs font-medium uppercase tracking-wider rounded transition-all duration-200"
+          [class]="mainTab() === 'items' ? 'bg-white text-owl-dark shadow-sm' : 'text-owl-text hover:text-owl-dark'">
+    <i class="pi pi-list mr-1.5 text-xs"></i> Menu Items
+  </button>
+  <button (click)="mainTab.set('specials')"
+          class="px-5 py-2 text-xs font-medium uppercase tracking-wider rounded transition-all duration-200"
+          [class]="mainTab() === 'specials' ? 'bg-white text-owl-dark shadow-sm' : 'text-owl-text hover:text-owl-dark'">
+    <i class="pi pi-star mr-1.5 text-xs"></i> Daily Specials
+    @if (specials().length > 0) {
+      <span class="ml-1.5 bg-owl-primary text-white text-xs px-1.5 py-0.5 rounded-full">{{ specials().length }}</span>
+    }
+  </button>
+</div>
+
+<!-- ══ MENU ITEMS TAB ══ -->
+@if (mainTab() === 'items') {
+
+<!-- Category tabs -->
+<div class="flex flex-wrap gap-2 mb-6">
+  @for (cat of categories(); track cat.key) {
+    <button (click)="activeTab.set(cat.key)"
+            class="px-5 py-2 text-xs font-medium uppercase tracking-wider border transition-all duration-200"
+            [class]="activeTab() === cat.key
+              ? 'bg-owl-primary text-white border-owl-primary'
+              : 'border-gray-300 text-owl-text hover:border-owl-primary bg-white'">
+      {{ cat.label }}
+    </button>
+  }
+</div>
+
+<!-- Card grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+  @for (item of filtered(); track item.id) {
+    <div class="bg-white rounded shadow-sm overflow-hidden group">
+      <div class="relative overflow-hidden h-44">
+        <img [src]="item.img" [alt]="item.name"
+             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
+        <span class="absolute top-3 left-3 bg-owl-primary text-white text-xs px-2.5 py-1 uppercase tracking-wider">
+          {{ categoryLabels()[item.category] }}
+        </span>
+      </div>
+      <div class="p-4">
+        <div class="flex items-start justify-between gap-2 mb-2">
+          <h3 class="font-heading text-sm text-owl-dark">{{ item.name }}</h3>
+          <span class="text-owl-primary font-bold text-sm flex-shrink-0">{{ item.price }} ₺</span>
+        </div>
+        <p class="text-xs text-owl-text mb-4 leading-relaxed">
+          {{ item.ingredients.join(', ') }}
+        </p>
+        <div class="flex gap-2">
+          <button (click)="openEdit(item)"
+                  class="flex-1 border border-gray-300 text-owl-text text-xs py-2 hover:border-owl-primary hover:text-owl-primary transition-colors">
+            <i class="pi pi-pencil mr-1.5"></i>Edit
+          </button>
+          <button (click)="delete(item.id)"
+                  class="flex-1 border border-red-200 text-red-400 text-xs py-2 hover:bg-red-50 transition-colors">
+            <i class="pi pi-trash mr-1.5"></i>Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+} <!-- end @if items -->
+
+<!-- ══ DAILY SPECIALS TAB ══ -->
+@if (mainTab() === 'specials') {
+
+@if (specials().length === 0) {
+  <div class="bg-white rounded shadow-sm py-16 text-center text-owl-text">
+    <i class="pi pi-star block text-4xl text-gray-300 mb-3"></i>
+    <p class="text-sm mb-4">There are no daily specials yet.</p>
+    <button (click)="openAddSpecial()"
+            class="bg-owl-primary text-white text-xs font-medium uppercase tracking-widest px-6 py-3 hover:bg-owl-dark transition-colors">
+      <i class="pi pi-plus mr-2 text-xs"></i> Add First Special
+    </button>
+  </div>
+} @else {
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+    @for (special of specials(); track special.id; let i = $index) {
+      <div class="bg-white rounded shadow-sm overflow-hidden group">
+        <div class="relative overflow-hidden h-44">
+          @if (special.imageUrl) {
+            <img [src]="special.imageUrl" [alt]="special.title"
+                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+          } @else {
+            <div class="w-full h-full bg-owl-light flex items-center justify-center">
+              <i class="pi pi-star text-4xl text-gray-300"></i>
+            </div>
+          }
+          <span class="absolute top-3 left-3 bg-owl-primary text-white text-xs px-2.5 py-1 uppercase tracking-wider">
+            #{{ i + 1 }}
+          </span>
+        </div>
+        <div class="p-4">
+          <div class="flex items-start justify-between gap-2 mb-1">
+            <h3 class="font-heading text-sm text-owl-dark">{{ special.title }}</h3>
+            <span class="text-owl-primary font-bold text-sm flex-shrink-0">{{ special.price }} ₺</span>
+          </div>
+          <p class="text-xs text-owl-text mb-4 leading-relaxed line-clamp-2">{{ special.description }}</p>
+          <button (click)="deleteSpecial(special.id)"
+                  class="w-full border border-red-200 text-red-400 text-xs py-2 hover:bg-red-50 transition-colors">
+            <i class="pi pi-trash mr-1.5"></i>Remove
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+} <!-- end @if specials -->
+
+<!-- Modal -->
+@if (modalOpen()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+       style="background:rgba(0,0,0,0.5)">
+    <div class="bg-white w-full max-w-lg rounded shadow-xl max-h-[90vh] overflow-y-auto">
+
+      <!-- Modal title -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 class="font-heading text-base text-owl-dark">
+          {{ editingId() ? 'Edit Item' : 'Add New Item' }}
+        </h2>
+        <button (click)="modalOpen.set(false)" class="text-gray-400 hover:text-owl-dark transition-colors">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <div class="p-6 space-y-4">
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Item Name</label>
+          <input type="text" [ngModel]="form().name" (ngModelChange)="updateFormField('name', $event)"
+                 class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                 placeholder="Item name">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Price (₺)</label>
+            <input type="number" [ngModel]="form().price" (ngModelChange)="updateFormField('price', +$event)"
+                   class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="0">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Category</label>
+            <select [ngModel]="form().category" (ngModelChange)="updateFormField('category', $event)"
+                    class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none bg-white">
+              @for (cat of categories(); track cat.key) {
+                @if (cat.key !== 'all') {
+                  <option [value]="cat.key">{{ cat.label }}</option>
+                }
+              }
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Image URL</label>
+          <input type="text" [ngModel]="form().img" (ngModelChange)="updateFormField('img', $event)"
+                 class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                 placeholder="assets/images/menu/...">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Ingredients</label>
+          <div class="flex gap-2 mb-2">
+            <input type="text" [ngModel]="ingredientInput()" (ngModelChange)="ingredientInput.set($event)"
+                   (keydown.enter)="addIngredient()"
+                   class="flex-1 border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="Type an ingredient and press Enter">
+            <button (click)="addIngredient()"
+                    class="bg-owl-primary text-white px-4 text-sm hover:bg-owl-dark transition-colors">
+              <i class="pi pi-plus"></i>
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            @for (ing of form().ingredients; track $index) {
+              <span class="flex items-center gap-1 bg-owl-light text-owl-dark text-xs px-2.5 py-1">
+                {{ ing }}
+                <button (click)="removeIngredient($index)" class="text-gray-400 hover:text-red-400 transition-colors ml-0.5">
+                  <i class="pi pi-times" style="font-size:9px"></i>
+                </button>
+              </span>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal footer -->
+      @if (saveError()) {
+        <div class="px-6 pb-2 text-xs text-red-500 flex items-center gap-1.5">
+          <i class="pi pi-exclamation-triangle"></i>{{ saveError() }}
+        </div>
+      }
+      <div class="flex gap-3 px-6 py-4 border-t border-gray-100">
+        <button (click)="modalOpen.set(false)" [disabled]="saving()"
+                class="flex-1 border border-gray-300 text-owl-text text-xs font-medium uppercase tracking-widest py-3 hover:border-owl-primary hover:text-owl-primary transition-colors disabled:opacity-50">
+          Cancel
+        </button>
+        <button (click)="save()" [disabled]="saving()"
+                class="flex-1 flex items-center justify-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest py-3 hover:bg-owl-dark transition-colors disabled:opacity-60">
+          @if (saving()) { <i class="pi pi-spin pi-spinner text-xs"></i> }
+          {{ editingId() ? 'Update' : 'Save' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- Special Modal -->
+@if (specialModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+       style="background:rgba(0,0,0,0.5)">
+    <div class="bg-white w-full max-w-lg rounded shadow-xl max-h-[90vh] overflow-y-auto">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 class="font-heading text-base text-owl-dark">Add New Special</h2>
+        <button (click)="specialModal.set(false)" class="text-gray-400 hover:text-owl-dark transition-colors">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Select from Menu (Optional)</label>
+          <select [ngModel]="pickedItemId()" (ngModelChange)="pickMenuItem(+$event)"
+                  class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none bg-white">
+            <option [value]="0">— Select from menu —</option>
+            @for (item of items(); track item.id) {
+              <option [value]="item.id">{{ item.name }} ({{ item.price }} ₺)</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Title</label>
+          <input type="text" [ngModel]="specialForm().title" (ngModelChange)="updateSpecialField('title', $event)"
+                 class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                 placeholder="Special name">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Description</label>
+          <textarea rows="2" [ngModel]="specialForm().desc" (ngModelChange)="updateSpecialField('desc', $event)"
+                    class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none resize-none"
+                    placeholder="Short description..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Price (₺)</label>
+            <input type="number" [ngModel]="specialForm().price" (ngModelChange)="updateSpecialField('price', +$event)"
+                   class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="0">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Order</label>
+            <input type="number" [ngModel]="specialForm().displayOrder" (ngModelChange)="updateSpecialField('displayOrder', +$event)"
+                   class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                   placeholder="0">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Image URL</label>
+          <input type="text" [ngModel]="specialForm().imageUrl" (ngModelChange)="updateSpecialField('imageUrl', $event)"
+                 class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
+                 placeholder="assets/images/...">
+        </div>
+
+      </div>
+
+      @if (specialError()) {
+        <div class="px-6 pb-2 text-xs text-red-500 flex items-center gap-1.5">
+          <i class="pi pi-exclamation-triangle"></i>{{ specialError() }}
+        </div>
+      }
+      <div class="flex gap-3 px-6 py-4 border-t border-gray-100">
+        <button (click)="specialModal.set(false)" [disabled]="specialSaving()"
+                class="flex-1 border border-gray-300 text-owl-text text-xs font-medium uppercase tracking-widest py-3 hover:border-owl-primary hover:text-owl-primary transition-colors disabled:opacity-50">
+          Cancel
+        </button>
+        <button (click)="saveSpecial()" [disabled]="specialSaving()"
+                class="flex-1 flex items-center justify-center gap-2 bg-owl-primary text-white text-xs font-medium uppercase tracking-widest py-3 hover:bg-owl-dark transition-colors disabled:opacity-60">
+          @if (specialSaving()) { <i class="pi pi-spin pi-spinner text-xs"></i> }
+          Add
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
