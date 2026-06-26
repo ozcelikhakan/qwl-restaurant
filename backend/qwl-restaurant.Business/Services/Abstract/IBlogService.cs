@@ -32,6 +32,9 @@ public interface IBlogService
     // Adds a new comment to a blog post.
     Task AddCommentAsync(CreateCommentDto dto);
 
+    // Gets all pending (unapproved) comments for admin moderation.
+    Task<IEnumerable<PendingCommentDto>> GetPendingCommentsAsync();
+
     // Approves a comment by its ID.
     Task ApproveCommentAsync(int commentId);
 

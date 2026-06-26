@@ -99,7 +99,7 @@
 
     <!-- Promotion cards -->
     <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-      @for (promo of promotions; track promo.name; let i = $index) {
+      @for (promo of promotions(); track promo.id; let i = $index) {
         <div owlAnimate="fadeInUp" [animateDelay]="i * 150" class="text-center">
           <div class="mb-5 promo-img">
             <img [src]="promo.img" [alt]="promo.name">
@@ -113,6 +113,8 @@
 
           <h4 class="mb-3 text-xl text-white font-heading">{{ promo.name }}</h4>
         </div>
+      } @empty {
+        <p class="md:col-span-3 py-6 text-center text-sm text-white/70">No promotions available right now.</p>
       }
     </div>
 
@@ -135,7 +137,7 @@
 
     <!-- Menu filter tabs -->
     <div class="flex flex-wrap justify-center gap-2 mb-10">
-      @for (f of filters; track f.key) {
+      @for (f of filters(); track f.key) {
         <button (click)="setFilter(f.key)"
                 class="px-5 py-2 text-xs font-medium tracking-wider uppercase transition-all duration-200 border"
                 [class.bg-owl-primary]="activeFilter() === f.key"
@@ -151,7 +153,7 @@
 
     <!-- Menu item grid -->
     <div class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-      @for (item of filteredMenu; track item.img) {
+      @for (item of filteredMenu(); track item.id) {
         <div class="bg-white group">
           <div class="menu-item-img">
             <img [src]="item.img" [alt]="item.name">
@@ -162,6 +164,8 @@
             <p class="text-sm font-semibold text-owl-primary">₺{{ item.price }}</p>
           </div>
         </div>
+      } @empty {
+        <p class="col-span-full py-10 text-center text-sm text-owl-text">No menu items yet.</p>
       }
     </div>
 
@@ -186,7 +190,7 @@
 
     <!-- Event list -->
     <div class="max-w-4xl mx-auto space-y-6">
-      @for (ev of staticEvents; track ev.title; let i = $index) {
+      @for (ev of events(); track ev.id; let i = $index) {
         <div owlAnimate="fadeInUp" [animateDelay]="i * 150"
              class="flex flex-col gap-6 p-5 transition-colors border sm:flex-row bg-white/5 border-white/10 hover:border-owl-primary/50">
 
@@ -204,13 +208,15 @@
           <!-- Event content -->
           <div class="flex-1">
             <h3 class="mb-2 text-xl text-white font-heading">
-              <a [routerLink]="['/events']" class="transition-colors hover:text-owl-primary">{{ ev.title }}</a>
+              <a [routerLink]="['/events', ev.id]" class="transition-colors hover:text-owl-primary">{{ ev.title }}</a>
             </h3>
 
             <p class="mb-3 text-xs text-owl-primary">{{ ev.date }} — {{ ev.location }}</p>
             <p class="text-sm leading-relaxed text-white/60">{{ ev.desc }}</p>
           </div>
         </div>
+      } @empty {
+        <p class="py-10 text-center text-sm text-white/60">No upcoming events yet.</p>
       }
     </div>
 
@@ -283,7 +289,7 @@
 
     <!-- Blog cards -->
     <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-      @for (post of staticBlogs; track post.slug; let i = $index) {
+      @for (post of blogs(); track post.id; let i = $index) {
         <div owlAnimate="fadeInUp" [animateDelay]="i * 150" class="bg-white group">
           <div class="blog-img">
             <img [src]="post.img" [alt]="post.title">
@@ -305,6 +311,8 @@
             </p>
           </div>
         </div>
+      } @empty {
+        <p class="md:col-span-2 py-10 text-center text-sm text-owl-text">No blog posts yet.</p>
       }
     </div>
 

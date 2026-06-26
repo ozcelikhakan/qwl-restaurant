@@ -48,7 +48,7 @@ public class ReservationController : ControllerBase
 
     // Updates the status of a reservation by its ID
     [Authorize(Roles="Admin")]
-    [HttpPatch("{id}")]
+    [HttpPatch("{id}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] int status)
     {
         await _service.UpdatesStatusAsync(id, status);

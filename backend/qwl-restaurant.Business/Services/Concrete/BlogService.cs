@@ -35,6 +35,26 @@ public class BlogService : IBlogService
         await _context.SaveChangesAsync();
     }
 
+    // Gets all pending (unapproved) comments for admin moderation.
+    public async Task<IEnumerable<PendingCommentDto>> GetPendingCommentsAsync()
+    {
+        return await _context.BlogComments
+            .Include(c => c.Blog)
+            .Where(c => !c.IsApproved)
+            .OrderByDescending(c => c.CreatedAt)
+            .Select(c => new PendingCommentDto
+            {
+                Id = c.Id,
+                BlogId = c.BlogId,
+                BlogTitle = c.Blog.Title,
+                AuthorName = c.AuthorName,
+                AuthorEmail = c.AuthorEmail,
+                Content = c.Content,
+                CreatedAt = c.CreatedAt
+            })
+            .ToListAsync();
+    }
+
     // Approves a blog comment by setting IsApproved to true.
     public async Task ApproveCommentAsync(int commentId)
     {

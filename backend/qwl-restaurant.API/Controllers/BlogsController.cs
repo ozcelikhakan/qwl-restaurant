@@ -85,6 +85,11 @@ public class BlogsController : ControllerBase
         return Ok(new { message = "Your comment waiting for approve"});
     }
 
+    // Gets all pending (unapproved) comments for admin moderation
+    [Authorize(Roles="Admin")]
+    [HttpGet("comments/pending")]
+    public async Task<IActionResult> PendingComments() => Ok(await _service.GetPendingCommentsAsync());
+
     // Approves a pending blog comment
     [Authorize(Roles="Admin")]
     [HttpPost("comments/{id}/approve")]

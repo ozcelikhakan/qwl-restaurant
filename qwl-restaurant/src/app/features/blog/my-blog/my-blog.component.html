@@ -249,6 +249,13 @@
         </div>
 
         <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Content</label>
+          <textarea rows="8" [ngModel]="form().content" (ngModelChange)="updateField('content', $event)"
+                    class="w-full border border-gray-200 px-4 py-2.5 text-sm text-owl-dark focus:border-owl-primary focus:outline-none transition-colors resize-y"
+                    placeholder="Write your blog content here..."></textarea>
+        </div>
+
+        <div>
           <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Cover Image URL</label>
           <input type="url" [ngModel]="form().img" (ngModelChange)="updateField('img', $event)"
                  class="w-full border border-gray-200 px-4 py-2.5 text-sm text-owl-dark placeholder-gray-400 focus:border-owl-primary focus:outline-none transition-colors"

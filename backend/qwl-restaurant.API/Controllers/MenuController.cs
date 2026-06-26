@@ -44,7 +44,8 @@ public class MenuController : ControllerBase
     public async Task<IActionResult> CreateItem([FromBody] CreateMenuItemDto dto)
     {
         var result = await _service.CreateMenuItemAsync(dto);
-        return CreatedAtAction(nameof(GetItemByIdAsync), new { id = result.Id}, result );
+        /*return CreatedAtAction(nameof(GetItemByIdAsync), new { id = result.Id}, result );*/
+        return Ok(result);
     }
 
     //Updates an existing menu item by its ID

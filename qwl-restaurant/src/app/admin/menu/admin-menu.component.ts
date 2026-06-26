@@ -29,9 +29,12 @@ function mapDto(i: MenuItemDto): MenuItem {
   };
 }
 
+// Form model — price is nullable so the input can start empty instead of showing 0
+type MenuItemForm = Omit<MenuItem, 'id' | 'price'> & { price: number | null };
+
 // Returns the default empty menu item form data
-const emptyForm = (firstSlug = '', firstId = 0): Omit<MenuItem, 'id'> => ({
-  img: '', name: '', price: 0, category: firstSlug, categoryId: firstId, ingredients: []
+const emptyForm = (firstSlug = '', firstId = 0): MenuItemForm => ({
+  img: '', name: '', price: null, category: firstSlug, categoryId: firstId, ingredients: []
 });
 
 @Component({
@@ -71,7 +74,7 @@ export class AdminMenuComponent implements OnInit {
   specialModal    = signal(false);
   specialSaving   = signal(false);
   specialError    = signal('');
-  specialForm     = signal({ title: '', desc: '', price: 0, imageUrl: '', displayOrder: 0 });
+  specialForm     = signal<{ title: string; desc: string; price: number | null; imageUrl: string; displayOrder: number }>({ title: '', desc: '', price: null, imageUrl: '', displayOrder: 0 });
   pickedItemId    = signal(0);
 
   // Filters menu items by the selected category tab
@@ -148,6 +151,7 @@ export class AdminMenuComponent implements OnInit {
     const f = this.form();
     if (!f.name.trim()) { this.saveError.set('Item name is required.'); return; }
     if (!f.categoryId)  { this.saveError.set('Please select a category.'); return; }
+    if (!f.price || f.price <= 0) { this.saveError.set('Price must be greater than 0.'); return; }
     this.saveError.set('');
     this.saving.set(true);
     const dto: CreateMenuItemDto = {
@@ -193,7 +197,7 @@ export class AdminMenuComponent implements OnInit {
   }
 
   // Updates a single field in the menu item form
-  updateFormField(field: keyof ReturnType<typeof emptyForm>, value: string | number): void {
+  updateFormField(field: keyof ReturnType<typeof emptyForm>, value: string | number | null): void {
     if (field === 'category') { this.onCategoryChange(value as string); return; }
     this.form.update(f => ({ ...f, [field]: value }));
   }
@@ -202,7 +206,7 @@ export class AdminMenuComponent implements OnInit {
 
   // Opens the modal for creating a new daily special
   openAddSpecial(): void {
-    this.specialForm.set({ title: '', desc: '', price: 0, imageUrl: '', displayOrder: this.specials().length });
+    this.specialForm.set({ title: '', desc: '', price: null, imageUrl: '', displayOrder: this.specials().length });
     this.pickedItemId.set(0);
     this.specialError.set('');
     this.specialModal.set(true);
@@ -225,7 +229,7 @@ export class AdminMenuComponent implements OnInit {
   }
 
   // Updates a single field in the daily special form
-  updateSpecialField(field: 'title' | 'desc' | 'price' | 'imageUrl' | 'displayOrder', value: string | number): void {
+  updateSpecialField(field: 'title' | 'desc' | 'price' | 'imageUrl' | 'displayOrder', value: string | number | null): void {
     this.specialForm.update(f => ({ ...f, [field]: value }));
   }
 
@@ -233,6 +237,7 @@ export class AdminMenuComponent implements OnInit {
   saveSpecial(): void {
     const f = this.specialForm();
     if (!f.title.trim()) { this.specialError.set('Title is required.'); return; }
+    if (!f.price || f.price <= 0) { this.specialError.set('Price must be greater than 0.'); return; }
     this.specialError.set('');
     this.specialSaving.set(true);
     this.svc.createDailySpecial({

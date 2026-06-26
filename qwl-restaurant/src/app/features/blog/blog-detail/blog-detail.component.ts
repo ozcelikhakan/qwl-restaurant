@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -27,7 +27,7 @@ interface DisplayPost {
 @Component({
   selector: 'app-blog-detail',
   standalone: true,
-  imports: [DatePipe, FormsModule,  PageBannerComponent, ScrollAnimateDirective],
+  imports: [DatePipe, FormsModule, RouterLink, PageBannerComponent, ScrollAnimateDirective],
   templateUrl: './blog-detail.component.html',
   styleUrl: './blog-detail.component.scss'
 })
@@ -88,29 +88,31 @@ export class BlogDetailComponent implements OnInit {
   commentErr = signal('');
 
   /**
-   * Static sidebar categories displayed on the blog detail page.
+   * All published posts, used to build the sidebar categories and tags.
    */
-  categories = [
-    { name: 'Recipes', count: 12 },
-    { name: 'Culinary Culture', count: 8 },
-    { name: 'Drinks', count: 5 },
-    { name: 'Sustainability', count: 4 },
-    { name: 'News', count: 6 },
-  ];
+  private allPosts = signal<{ category: string; tags: string[] }[]>([]);
 
   /**
-   * Static tag list displayed on the blog detail page.
+   * Sidebar categories derived from the first tag of each published post, with counts.
    */
-  allTags = [
-    'Pizza',
-    'Recipe',
-    'Italian',
-    'Mediterranean',
-    'Healthy',
-    'Wine',
-    'Seasonal',
-    'Pasta'
-  ];
+  categories = computed<{ name: string; count: number }[]>(() => {
+    const counts = new Map<string, number>();
+    for (const p of this.allPosts()) {
+      if (p.category) counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
+    }
+    return [...counts.entries()].map(([name, count]) => ({ name, count }));
+  });
+
+  /**
+   * Unique tags collected from all published posts.
+   */
+  allTags = computed<string[]>(() => {
+    const tags = new Set<string>();
+    for (const p of this.allPosts()) {
+      for (const t of p.tags) tags.add(t);
+    }
+    return [...tags];
+  });
 
   /**
    * Loads the blog post by slug when the component is initialized.
@@ -146,6 +148,11 @@ export class BlogDetailComponent implements OnInit {
         this.error.set('Blog post not found.');
         this.loading.set(false);
       }
+    });
+
+    // Load all published posts to build the dynamic sidebar.
+    this.blogService.getPublished().subscribe({
+      next: dtos => this.allPosts.set(dtos.map(d => ({ category: d.tags?.[0] ?? '', tags: d.tags ?? [] }))),
     });
   }
 

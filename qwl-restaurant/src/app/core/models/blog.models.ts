@@ -43,3 +43,13 @@ export interface CreateCommentDto {
     authorEmail: string;
     content: string;
 }
+
+export interface PendingCommentDto {
+    id: number;
+    blogId: number;
+    blogTitle: string;
+    authorName: string;
+    authorEmail: string;
+    content: string;
+    createdAt: string;
+}

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { BlogDto, BlogDetailDto, CreateBlogDto, CreateCommentDto } from '../models/blog.models';
+import { BlogDto, BlogDetailDto, CreateBlogDto, CreateCommentDto, PendingCommentDto } from '../models/blog.models';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -56,7 +56,7 @@ export class BlogService {
    * Publishes a blog post by its ID.
    */
   publish(id: number): Observable<void> {
-    return this.http.post<void>(`${this.base}/${id}/publish`, {});
+    return this.http.put<void>(`${this.base}/${id}/publish`, {});
   }
 
   /**
@@ -71,6 +71,13 @@ export class BlogService {
    */
   addComment(dto: CreateCommentDto): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.base}/comments`, dto);
+  }
+
+  /**
+   * Gets all pending (unapproved) comments for admin moderation.
+   */
+  getPendingComments(): Observable<PendingCommentDto[]> {
+    return this.http.get<PendingCommentDto[]>(`${this.base}/comments/pending`);
   }
 
   /**

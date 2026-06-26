@@ -11,6 +11,7 @@ export interface MenuItem {
     description: string | null;
     ingredients: string | null;
     price: number;
+    displayOrder: number;
     imageUrl: string | null;
     menuCategoryId: number;
     categoryName: string;

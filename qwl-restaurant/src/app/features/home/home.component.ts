@@ -1,6 +1,13 @@
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { ScrollAnimateDirective } from '../../shared/directives/scroll-animate.directive';
+import { MenuService } from '../../core/services/menu.service';
+import { EventService } from '../../core/services/event.service';
+import { BlogService } from '../../core/services/blog.service';
+import { MenuItem as MenuItemDto, DailySpecial } from '../../core/models/menu.models';
+import { EventDto } from '../../core/models/event.models';
+import { BlogDto } from '../../core/models/blog.models';
 
 /**
  * Represents a hero slider item.
@@ -12,6 +19,102 @@ interface Slide {
   titleHighlight: string;
   ctaLabel: string;
   ctaLink: string;
+}
+
+/**
+ * Menu filter tab shown on the home page.
+ */
+interface MenuFilter { key: string; label: string; }
+
+/**
+ * Menu item shown in the home page menu grid.
+ */
+interface HomeMenuItem { id: number; img: string; name: string; price: number; category: string; }
+
+/**
+ * Event card shown in the home page events section.
+ */
+interface HomeEvent { id: number; img: string; day: string; month: string; title: string; date: string; location: string; desc: string; }
+
+/**
+ * Blog card shown in the home page blog section.
+ */
+interface HomeBlog { id: number; img: string; tag: string; title: string; date: string; comments: number; slug: string; }
+
+/**
+ * Promotion card shown in the home page promotions section.
+ */
+interface HomePromo { id: number; img: string; label: string; price: string; name: string; }
+
+/**
+ * Full English month names used in event date labels.
+ */
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/**
+ * Fallback images used when admin content has no image.
+ */
+const MENU_IMGS = Array.from({ length: 8 }, (_, i) => `assets/images/menu/menu_${i + 1}.jpg`);
+const EVENT_IMGS = Array.from({ length: 5 }, (_, i) => `assets/images/event/event_${i + 1}.jpg`);
+const BLOG_IMGS = Array.from({ length: 5 }, (_, i) => `assets/images/blog/blog-${i + 1}.jpg`);
+const PROMO_IMGS = Array.from({ length: 3 }, (_, i) => `assets/images/promotions/promo_${i + 1}.jpg`);
+
+/**
+ * Maps a backend menu item into the home page menu card model.
+ */
+function mapMenuItem(item: MenuItemDto, index: number): HomeMenuItem {
+  return {
+    id:       item.id,
+    img:      item.imageUrl || MENU_IMGS[index % MENU_IMGS.length],
+    name:     item.name,
+    price:    item.price,
+    category: item.categorySlug,
+  };
+}
+
+/**
+ * Maps a backend event into the home page event card model.
+ */
+function mapEvent(dto: EventDto, index: number): HomeEvent {
+  const date = new Date(dto.eventDate);
+  return {
+    id:       dto.id,
+    img:      dto.imageUrl || EVENT_IMGS[index % EVENT_IMGS.length],
+    day:      String(date.getDate()).padStart(2, '0'),
+    month:    MONTH_NAMES[date.getMonth()],
+    title:    dto.title,
+    date:     date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+    location: dto.location ?? 'QWL Restaurant',
+    desc:     dto.description,
+  };
+}
+
+/**
+ * Maps a backend daily special into the home page promotion card model.
+ */
+function mapPromotion(dto: DailySpecial, index: number): HomePromo {
+  return {
+    id:    dto.id,
+    img:   dto.imageUrl || PROMO_IMGS[index % PROMO_IMGS.length],
+    label: 'Starting from',
+    price: `₺${dto.price}`,
+    name:  dto.title,
+  };
+}
+
+/**
+ * Maps a backend blog post into the home page blog card model.
+ */
+function mapBlog(dto: BlogDto, index: number): HomeBlog {
+  return {
+    id:       dto.id,
+    img:      dto.coverImageUrl || BLOG_IMGS[index % BLOG_IMGS.length],
+    tag:      dto.tags?.[0] ?? 'Blog',
+    title:    dto.title,
+    date:     dto.publishedAt ? new Date(dto.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
+    comments: dto.commentCount,
+    slug:     dto.slug,
+  };
 }
 
 @Component({
@@ -65,7 +168,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   ];
 
-  // ── Menu Filter ───────────────────────────────────
+  // ── Services ──────────────────────────────────────
+  private menuSvc = inject(MenuService);
+  private eventSvc = inject(EventService);
+  private blogSvc = inject(BlogService);
+
+  // ── Menu Filter (admin-managed) ───────────────────
 
   /**
    * Stores the currently selected menu filter key.
@@ -73,68 +181,32 @@ export class HomeComponent implements OnInit, OnDestroy {
   activeFilter = signal('all');
 
   /**
-   * Menu category filters displayed on the home page.
+   * Menu category filters, built from admin-managed categories.
    */
-  filters = [
-    { key: 'all', label: 'All' },
-    { key: 'breakfast', label: 'Breakfast' },
-    { key: 'lunch', label: 'Lunch' },
-    { key: 'dinner', label: 'Dinner' },
-    { key: 'coffee', label: 'Coffee' },
-    { key: 'snacks', label: 'Snacks' }
-  ];
+  filters = signal<MenuFilter[]>([{ key: 'all', label: 'All' }]);
 
   /**
-   * Static menu items displayed on the home page.
+   * All menu items loaded from the backend.
    */
-  staticMenuItems = [
-    { img: 'assets/images/menu/menu_1.jpg', name: 'Cupcake Recipe', price: 120, category: 'breakfast' },
-    { img: 'assets/images/menu/menu_2.jpg', name: 'Grilled Chicken', price: 180, category: 'dinner' },
-    { img: 'assets/images/menu/menu_3.jpg', name: 'Eggs Benedict', price: 95, category: 'breakfast' },
-    { img: 'assets/images/menu/menu_4.jpg', name: 'Special Burger', price: 160, category: 'lunch' },
-    { img: 'assets/images/menu/menu_5.jpg', name: 'Filter Coffee', price: 55, category: 'coffee' },
-    { img: 'assets/images/menu/menu_6.jpg', name: 'Avocado Toast', price: 110, category: 'breakfast' },
-    { img: 'assets/images/menu/menu_7.jpg', name: 'Pasta e Fagioli', price: 145, category: 'lunch' },
-    { img: 'assets/images/menu/menu_8.jpg', name: 'Tiramisù', price: 75, category: 'dinner' }
-  ];
+  menuItems = signal<HomeMenuItem[]>([]);
 
   /**
-   * Returns filtered menu items based on the active category.
-   * If the selected filter is "all", all menu items are returned.
+   * Returns up to 8 menu items filtered by the active category.
    */
-  get filteredMenu() {
+  filteredMenu = computed<HomeMenuItem[]>(() => {
     const filter = this.activeFilter();
+    const items = filter === 'all'
+      ? this.menuItems()
+      : this.menuItems().filter(item => item.category === filter);
+    return items.slice(0, 8);
+  });
 
-    return filter === 'all'
-      ? this.staticMenuItems
-      : this.staticMenuItems.filter(item => item.category === filter);
-  }
-
-  // ── Events ────────────────────────────────────────
+  // ── Events (admin-managed) ────────────────────────
 
   /**
-   * Static event cards displayed on the home page.
+   * Up to 3 event cards loaded from the backend.
    */
-  staticEvents = [
-    {
-      img: 'assets/images/event/event_1.jpg',
-      day: '22',
-      month: 'December',
-      title: 'Special Gala Night 2024',
-      date: 'December 22, 2024',
-      location: '196 Istanbul, TR',
-      desc: 'You are invited to the biggest gala night of the year. Live music, a special menu and unforgettable moments await you.'
-    },
-    {
-      img: 'assets/images/event/event_2.jpg',
-      day: '05',
-      month: 'January',
-      title: 'New Year Brunch Party',
-      date: 'January 5, 2025',
-      location: '196 Istanbul, TR',
-      desc: 'Celebrate the first brunch of the new year with us. Open buffet, champagne and live performance.'
-    }
-  ];
+  events = signal<HomeEvent[]>([]);
 
   // ── Team ──────────────────────────────────────────
 
@@ -170,46 +242,51 @@ export class HomeComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  // ── Blog ─────────────────────────────────────────
+  // ── Blog (admin-managed) ──────────────────────────
 
   /**
-   * Static blog cards displayed on the home page.
+   * Up to 2 published blog cards loaded from the backend.
    */
-  staticBlogs = [
-    {
-      img: 'assets/images/blog/blog-1.jpg',
-      tag: 'Lifestyle',
-      title: 'The Meeting Point of Restaurant Culture and Modern Culinary Art',
-      date: 'February 24, 2024',
-      comments: 5,
-      slug: 'restaurant-culture'
-    },
-    {
-      img: 'assets/images/blog/blog-2.jpg',
-      tag: 'Events',
-      title: 'The Countdown Has Begun for the Annual Gastronomic Festival',
-      date: 'March 18, 2024',
-      comments: 3,
-      slug: 'gastronomic-festival'
-    }
-  ];
+  blogs = signal<HomeBlog[]>([]);
 
   // ── Promotions ───────────────────────────────────
 
   /**
-   * Static promotion cards displayed on the home page.
+   * Promotion cards built from admin-managed daily specials.
    */
-  promotions = [
-    { img: 'assets/images/promotions/promo_1.jpg', label: 'Starting from', price: '₺150', name: 'Special Breakfast' },
-    { img: 'assets/images/promotions/promo_2.jpg', label: 'Starting from', price: '₺250', name: 'Special Lunch' },
-    { img: 'assets/images/promotions/promo_3.jpg', label: 'Starting from', price: '₺350', name: 'Special Dinner' }
-  ];
+  promotions = signal<HomePromo[]>([]);
 
   /**
-   * Starts the hero slider when the component is initialized.
+   * Starts the hero slider and loads admin-managed content when initialized.
    */
   ngOnInit(): void {
     this.startSlider();
+    this.loadContent();
+  }
+
+  /**
+   * Loads menu items, categories, events and blog posts from the backend.
+   */
+  private loadContent(): void {
+    forkJoin({
+      cats:     this.menuSvc.getCategories(),
+      items:    this.menuSvc.getItems(),
+      specials: this.menuSvc.getDailySpecials(),
+      events:   this.eventSvc.getAll(),
+      blogs:    this.blogSvc.getPublished(),
+    }).subscribe({
+      next: ({ cats, items, specials, events, blogs }) => {
+        this.filters.set([
+          { key: 'all', label: 'All' },
+          ...cats.map(c => ({ key: c.slug, label: c.name })),
+        ]);
+        this.menuItems.set(items.map(mapMenuItem));
+        this.promotions.set(specials.slice(0, 3).map(mapPromotion));
+        this.events.set(events.slice(0, 3).map(mapEvent));
+        this.blogs.set(blogs.slice(0, 2).map(mapBlog));
+      },
+      error: () => { /* Home page keeps its sections empty if content cannot load. */ },
+    });
   }
 
   /**

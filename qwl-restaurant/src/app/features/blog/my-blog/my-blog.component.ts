@@ -42,6 +42,7 @@ function mapDto(blog: BlogDto): MyBlog {
 const emptyForm = () => ({
   title: '',
   summary: '',
+  content: '',
   img: '',
   tags: [] as string[]
 });
@@ -184,7 +185,7 @@ export class MyBlogsComponent implements OnInit {
   /**
    * Updates a single form field.
    */
-  updateField(field: 'title' | 'summary' | 'img', value: string): void {
+  updateField(field: 'title' | 'summary' | 'content' | 'img', value: string): void {
     this.form.update(form => ({
       ...form,
       [field]: value
@@ -208,7 +209,7 @@ export class MyBlogsComponent implements OnInit {
     const dto: CreateBlogDto = {
       title: form.title,
       summary: form.summary,
-      content: '',
+      content: form.content,
       coverImageUrl: form.img || null,
       tags: form.tags,
     };

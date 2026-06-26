@@ -57,6 +57,19 @@ public class EventsController : ControllerBase
     }
 
     /// <summary>
+    /// Buys a ticket for an event for the currently logged in user
+    /// </summary>
+    /// <returns>Only authenticated user can access this endpoint</returns>
+    [Authorize]
+    [HttpPost("tickets/buy")]
+    public async Task<IActionResult> BuyTicket([FromBody] BuyTicketDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var result = await _service.BuyTicketAsync(dto, userId);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Gets tickets owned by the currently logged in user
     /// </summary>
     /// <returns>Only authenticated user can access this endpoint</returns>

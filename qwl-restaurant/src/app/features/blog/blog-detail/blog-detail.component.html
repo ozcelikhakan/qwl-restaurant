@@ -193,9 +193,10 @@
           </h4>
 
           <ul class="space-y-2">
-            @for (cat of categories; track cat.name) {
+            @for (cat of categories(); track cat.name) {
               <li class="flex justify-between items-center py-2 border-b border-dashed border-gray-200 last:border-0">
-                <a href="#" class="text-sm text-owl-text hover:text-owl-primary transition-colors flex items-center gap-2">
+                <a [routerLink]="['/blog']" [queryParams]="{ tag: cat.name }"
+                   class="text-sm text-owl-text hover:text-owl-primary transition-colors flex items-center gap-2">
                   <i class="pi pi-angle-right text-owl-primary text-xs"></i>
                   {{ cat.name }}
                 </a>
@@ -204,6 +205,8 @@
                   {{ cat.count }}
                 </span>
               </li>
+            } @empty {
+              <li class="py-2 text-sm text-owl-text">No categories yet.</li>
             }
           </ul>
         </div>
@@ -215,10 +218,13 @@
           </h4>
 
           <div class="flex flex-wrap gap-2">
-            @for (tag of allTags; track tag) {
-              <a href="#" class="border border-gray-300 text-xs text-owl-text px-3 py-1.5 hover:bg-owl-primary hover:text-white hover:border-owl-primary transition-all">
+            @for (tag of allTags(); track tag) {
+              <a [routerLink]="['/blog']" [queryParams]="{ tag: tag }"
+                 class="border border-gray-300 text-xs text-owl-text px-3 py-1.5 hover:bg-owl-primary hover:text-white hover:border-owl-primary transition-all">
                 {{ tag }}
               </a>
+            } @empty {
+              <span class="text-sm text-owl-text">No tags yet.</span>
             }
           </div>
         </div>

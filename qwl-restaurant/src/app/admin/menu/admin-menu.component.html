@@ -177,7 +177,7 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Price (₺)</label>
-            <input type="number" [ngModel]="form().price" (ngModelChange)="updateFormField('price', +$event)"
+            <input type="number" min="1" [ngModel]="form().price" (ngModelChange)="updateFormField('price', $event)"
                    class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
                    placeholder="0">
           </div>
@@ -292,7 +292,7 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Price (₺)</label>
-            <input type="number" [ngModel]="specialForm().price" (ngModelChange)="updateSpecialField('price', +$event)"
+            <input type="number" min="1" [ngModel]="specialForm().price" (ngModelChange)="updateSpecialField('price', $event)"
                    class="w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-owl-primary focus:outline-none"
                    placeholder="0">
           </div>

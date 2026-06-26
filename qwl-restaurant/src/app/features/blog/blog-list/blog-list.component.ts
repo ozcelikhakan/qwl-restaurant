@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, signal, computed } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PageBannerComponent, BreadcrumbItem } from '../../../shared/components/page-banner/page-banner.component';
 import { ScrollAnimateDirective } from '../../../shared/directives/scroll-animate.directive';
 import { AuthService } from '../../../core/services/auth.service';
@@ -65,41 +65,61 @@ export class BlogListComponent {
   ];
 
   /**
-   * Static blog categories displayed in the sidebar.
+   * The currently selected category/tag filter, or null when showing all posts.
    */
-  categories = [
-    { name: 'Recipes', count: 12 },
-    { name: 'Culinary Culture', count: 8 },
-    { name: 'Drinks', count: 5 },
-    { name: 'Sustainability', count: 4 },
-    { name: 'News', count: 6 },
-  ];
+  activeTag = signal<string | null>(null);
 
   /**
-   * Static tag list displayed in the sidebar.
+   * Blog categories derived from the first tag of each post, with post counts.
    */
-  allTags = [
-    'Pizza',
-    'Recipe',
-    'Italian',
-    'Mediterranean',
-    'Healthy',
-    'Wine',
-    'Seasonal',
-    'Pasta',
-    'Fresh',
-    'Diet',
-    'Tips'
-  ];
+  categories = computed<{ name: string; count: number }[]>(() => {
+    const counts = new Map<string, number>();
+    for (const post of this.posts()) {
+      if (post.category) counts.set(post.category, (counts.get(post.category) ?? 0) + 1);
+    }
+    return [...counts.entries()].map(([name, count]) => ({ name, count }));
+  });
 
   /**
-   * Returns the latest three blog posts.
+   * Unique list of tags collected from all published posts.
+   */
+  allTags = computed<string[]>(() => {
+    const tags = new Set<string>();
+    for (const post of this.posts()) {
+      for (const tag of post.tags) tags.add(tag);
+    }
+    return [...tags];
+  });
+
+  /**
+   * Posts filtered by the active category/tag. Returns all posts when no filter is active.
+   */
+  filteredPosts = computed<BlogPost[]>(() => {
+    const tag = this.activeTag();
+    return tag ? this.posts().filter(p => p.tags.includes(tag)) : this.posts();
+  });
+
+  /**
+   * Returns the latest three blog posts (always unfiltered).
    */
   get recentPosts(): BlogPost[] {
     return this.posts().slice(0, 3);
   }
 
+  /**
+   * Toggles the category/tag filter. Selecting the active one clears the filter.
+   */
+  selectTag(tag: string): void {
+    this.activeTag.update(current => current === tag ? null : tag);
+  }
+
   constructor() {
+    /**
+     * Apply an initial category/tag filter from the ?tag= query parameter, if present.
+     */
+    const initialTag = inject(ActivatedRoute).snapshot.queryParamMap.get('tag');
+    if (initialTag) this.activeTag.set(initialTag);
+
     /**
      * Loads published blog posts from the API.
      */
